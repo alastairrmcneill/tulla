@@ -54,7 +54,7 @@ Predates this plan; recorded here for the history this document is meant to be.
 
 Nothing in Epics 2–5 can start for real until this epic's data/auth/observability spine exists. Tech plan §15 calls this out as the literal first phase.
 
-### 1.1 — GitHub repo `[ ]`
+### 1.1 — GitHub repo `[x]`
 **Depends on:** nothing.
 **References:** tech plan §14 (CI needs a remote to attach Actions to).
 **Implementation:**
