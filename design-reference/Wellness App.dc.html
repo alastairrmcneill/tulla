@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><style>
+body{margin:0;background:#151816;font-family:-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C8FF3D;text-decoration:none}a:hover{color:#DFFF8A}
+.dv-turn{padding:44px 48px 40px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#C8FF3D;color:#0B0D0C;border-radius:4px}
+.dv-tname{font:600 13px/1.2 -apple-system,system-ui;color:#F2F5F1}
+.dv-note{margin:0 0 24px;max-width:820px;font:12.5px/1.7 -apple-system,system-ui;color:rgba(242,245,241,.55)}
+.dv-note b{color:rgba(242,245,241,.85)}
+.dv-opts{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(242,245,241,.12);color:#F2F5F1;border-radius:5px}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui;color:rgba(242,245,241,.45)}
+.dv-next{margin:26px 0 0;font:12px/1.6 -apple-system,system-ui;color:rgba(242,245,241,.42)}
+@keyframes rise{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+</style></helmet>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><span class="dv-tid">3</span><span class="dv-tname">Full prototype on 2a — onboarding → paywall → athlete → coach</span></div>
+<p class="dv-note">Rebuilt on <b>Night training</b>: near-black ground, electric lime accent, all-caps micro-labels, oversized numerals, glass only on the tab bar, sheets and the FAB. Flag rows use <b>1b</b> (severity icon + reason chips). Turns 1–2 are preserved in <b>Wellness App v1 (turns 1-2)</b>.<br><br><b>Your scale legends:</b> each row header carries an <b>ⓘ</b>. The row shows the short label, and once answered, that number's exact wording in lime on the right. Tapping ⓘ opens a glass sheet with the long question and all five response strings — and each one is tappable, so the sheet doubles as a slower, fully-worded input path for anyone who wants it. Copy is verbatim from your <b>Question</b> model (two typos fixed: "Restless", and the double space in Mood 3).<br><br><b>Walk it with the pill bar above the phone</b> — or start at Welcome and go all the way through. The coach path gates on the trial exactly as specced: paywall → trial → team creation → Team Home, with the lockout screen reachable from the trial banner.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3a"><div class="dv-olabel"><span class="dv-oid">3a</span>Walkable prototype — 20 screens</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;width:402px;margin-bottom:2px">
+  <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="8">
+    <div onClick="{{ j.tap }}" style="{{ j.style }}">{{ j.label }}</div>
+  </sc-for>
+</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="true" hint-size="402px,874px">
+<div style="position:relative;height:100%;display:flex;flex-direction:column;overflow:hidden;background:#0B0D0C;color:#F2F5F1;font-family:-apple-system,system-ui">
+  <div style="position:absolute;top:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(200,255,61,.2),transparent 70%);filter:blur(24px);pointer-events:none"></div>
+
+  <div style="flex:1;overflow:auto;position:relative">
+
+  <sc-if value="{{ onWelcome }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.6px;color:#C8FF3D">DAILY READINESS</div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0">
+      <div style="font-size:46px;font-weight:800;letter-spacing:-2.2px;line-height:46px">Know how<br>you'll train<br>before you<br>turn up.</div>
+      <div style="font-size:16px;line-height:23px;color:rgba(242,245,241,.55);margin-top:22px;max-width:300px">Thirty seconds a day. The same self-report method elite squads use — free forever for your own tracking.</div>
+    </div>
+    <div onClick="{{ nav.quiz }}" style="padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;letter-spacing:-.2px;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.28)">GET STARTED</div>
+    <div style="text-align:center;font-size:14px;color:rgba(242,245,241,.4);margin-top:16px">Already have an account? <a href="#3a" onClick="{{ nav.signup }}">Log in</a></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onQuiz }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:58px 20px 40px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div onClick="{{ quizBack }}" style="font-size:22px;font-weight:600;color:rgba(242,245,241,.45);cursor:pointer;line-height:1">‹</div>
+      <div style="flex:1;height:4px;border-radius:2px;background:rgba(242,245,241,.1);overflow:hidden">
+        <div style="{{ quizBarStyle }}"></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:.8px;color:rgba(242,245,241,.4)">{{ quizCounter }}</div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.5px;color:#C8FF3D;margin-top:34px">{{ quizKicker }}</div>
+    <div style="font-size:34px;font-weight:800;letter-spacing:-1.4px;line-height:37px;margin-top:10px">{{ quizHeadline }}</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:10px;max-width:300px">{{ quizSub }}</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:26px">
+      <sc-for list="{{ quizOpts }}" as="o" hint-placeholder-count="4">
+        <div onClick="{{ o.tap }}" style="{{ o.style }}">
+          <div style="flex:1">
+            <div style="{{ o.labelStyle }}">{{ o.label }}</div>
+            <div style="{{ o.subStyle }}">{{ o.sub }}</div>
+          </div>
+          <div style="{{ o.check }}"></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onPersonalizing }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px">
+    <div style="width:74px;height:74px;border-radius:50%;border:3px solid rgba(242,245,241,.1);border-top-color:#C8FF3D;animation:spin 1s linear infinite"></div>
+    <div style="font-size:22px;font-weight:700;letter-spacing:-.6px;text-align:center;max-width:260px">Setting things up around your answers</div>
+    <div style="font-size:14px;color:rgba(242,245,241,.45);animation:pulse 1.6s ease-in-out infinite">{{ personalizingNote }}</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onPreview }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px;animation:rise .4s cubic-bezier(.2,.8,.2,1) both">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.5px;color:#C8FF3D">HERE'S WHAT YOU'LL GET</div>
+    <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;line-height:36px;margin-top:10px">{{ previewHeadline }}</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:10px;max-width:305px">{{ previewSub }}</div>
+
+    <sc-if value="{{ coachPath }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:24px;border-radius:24px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">EXAMPLE · NOT REAL DATA</div>
+      <div style="margin-top:12px;border-radius:18px;background:#141814;padding:14px 15px;display:flex;align-items:center;gap:12px">
+        <div style="width:34px;height:34px;border-radius:11px;background:rgba(255,90,78,.16);color:#FF5A4E;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800">!</div>
+        <div style="flex:1">
+          <div style="font-size:16.5px;font-weight:700;letter-spacing:-.2px">Priya N.</div>
+          <div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px;background:rgba(255,90,78,.14);color:#FF8A80">Hamstring pain</span>
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px;background:rgba(242,245,241,.09);color:rgba(242,245,241,.6)">3rd day low</span>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.55);margin-top:12px">One list, sorted by who needs you most. No spreadsheets, no chasing the group chat.</div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ athletePath }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:24px;border-radius:24px;padding:16px 16px 18px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">EXAMPLE · NOT REAL DATA</div>
+      <div style="display:flex;justify-content:center;margin-top:6px">
+        <svg width="230" height="230" viewBox="0 0 200 200">
+          <polygon points="100,28 168.5,77.8 142.3,158.2 57.7,158.2 31.5,77.8" fill="none" stroke="rgba(242,245,241,.1)" stroke-width="1"></polygon>
+          <polygon points="100,52 145.7,85.2 128.2,138.8 71.8,138.8 54.3,85.2" fill="none" stroke="rgba(242,245,241,.1)" stroke-width="1"></polygon>
+          <polygon points="100,76 122.8,92.6 114.1,119.4 85.9,119.4 77.2,92.6" fill="none" stroke="rgba(242,245,241,.1)" stroke-width="1"></polygon>
+          <polygon points="100,42 152,81.6 133,146 67,146 48,81.6" fill="none" stroke="#C8FF3D" stroke-width="2.5" stroke-linejoin="round"></polygon>
+          <circle cx="100" cy="42" r="4" fill="#C8FF3D"></circle><circle cx="152" cy="81.6" r="4" fill="#C8FF3D"></circle><circle cx="133" cy="146" r="4" fill="#C8FF3D"></circle><circle cx="67" cy="146" r="4" fill="#C8FF3D"></circle><circle cx="48" cy="81.6" r="4" fill="#C8FF3D"></circle>
+          <text x="100" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">FATIGUE</text>
+          <text x="186" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">SLEEP</text>
+          <text x="152" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">MUSCLES</text>
+          <text x="48" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">STRESS</text>
+          <text x="14" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">MOOD</text>
+        </svg>
+      </div>
+      <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.55)">Two weeks in, this shape becomes your baseline — and dips stop being a surprise.</div>
+    </div>
+    </sc-if>
+
+    <div onClick="{{ nav.signup }}" style="margin-top:20px;padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.28)">CONTINUE</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onSignup }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.5px;color:#C8FF3D">STEP 5 OF 5</div>
+    <div style="font-size:34px;font-weight:800;letter-spacing:-1.4px;line-height:37px;margin-top:10px">Save your setup</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:10px;max-width:300px">So your baseline and history follow you to any device. No card, nothing to cancel.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:26px">
+      <div style="padding:16px 16px;border-radius:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.1)">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.4)">EMAIL</div>
+        <div style="font-size:16.5px;margin-top:5px">sam@riverside.club</div>
+      </div>
+      <div style="padding:16px 16px;border-radius:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.1)">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.4)">PASSWORD</div>
+        <div style="font-size:16.5px;margin-top:5px;letter-spacing:3px;color:rgba(242,245,241,.7)">••••••••••</div>
+      </div>
+    </div>
+    <div onClick="{{ finishSignup }}" style="margin-top:18px;padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.28)">CREATE ACCOUNT</div>
+    <div onClick="{{ finishSignup }}" style="margin-top:12px;padding:18px;border-radius:20px;border:1px solid rgba(242,245,241,.16);text-align:center;font-size:16px;font-weight:700;color:rgba(242,245,241,.8);cursor:pointer">Email me a magic link instead</div>
+    <div style="font-size:12px;line-height:18px;color:rgba(242,245,241,.35);margin-top:20px;text-align:center">By continuing you agree to the <a href="#3a">terms</a> and <a href="#3a">privacy policy</a>.</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onPaywall }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:flex-end"><div onClick="{{ skipPaywall }}" style="font-size:14px;font-weight:600;color:rgba(242,245,241,.45);cursor:pointer">Not now</div></div>
+    <div style="flex:1;padding:22px 0 0">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.5px;color:#C8FF3D">COACHING A TEAM</div>
+      <div style="font-size:38px;font-weight:800;letter-spacing:-1.8px;line-height:40px;margin-top:10px">{{ paywallHeadline }}</div>
+      <div style="font-size:15.5px;line-height:22px;color:rgba(242,245,241,.55);margin-top:14px;max-width:310px">{{ paywallSub }}</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:26px">
+        <sc-for list="{{ paywallBullets }}" as="b" hint-placeholder-count="4">
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div style="width:22px;height:22px;border-radius:50%;background:rgba(200,255,61,.16);color:#C8FF3D;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px">✓</div>
+            <div style="font-size:15px;line-height:21px;color:rgba(242,245,241,.8)">{{ b.text }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.1);margin-bottom:14px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font-size:16.5px;font-weight:700">7 days free</div>
+        <div style="font-size:14px;color:rgba(242,245,241,.55)">then £8/month</div>
+      </div>
+      <div style="font-size:13px;line-height:18px;color:rgba(242,245,241,.45);margin-top:5px">No card now. We'll ask on day 7 — nothing happens automatically.</div>
+    </div>
+    <div onClick="{{ startTrial }}" style="padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.28)">START YOUR FREE 7-DAY TRIAL</div>
+    <div onClick="{{ skipPaywall }}" style="text-align:center;font-size:14px;color:rgba(242,245,241,.4);margin-top:14px;cursor:pointer">Just track myself for now — always free</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onCreateTeam }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px">
+    <div style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(200,255,61,.14);font-size:11.5px;font-weight:800;letter-spacing:.6px;color:#C8FF3D">TRIAL ACTIVE · 7 DAYS</div>
+    <div style="font-size:34px;font-weight:800;letter-spacing:-1.4px;line-height:37px;margin-top:14px">Name your team</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:10px;max-width:300px">Athletes will see this when they join. You can change it later.</div>
+    <div style="margin-top:24px;padding:16px;border-radius:16px;background:rgba(242,245,241,.05);border:1.5px solid #C8FF3D">
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#C8FF3D">TEAM NAME</div>
+      <div style="font-size:19px;font-weight:600;margin-top:6px">{{ teamName }}<span style="color:#C8FF3D">|</span></div>
+    </div>
+    <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.4);margin:22px 0 10px">SPORT (OPTIONAL)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <sc-for list="{{ sportChips }}" as="c" hint-placeholder-count="6">
+        <div onClick="{{ c.tap }}" style="{{ c.style }}">{{ c.label }}</div>
+      </sc-for>
+    </div>
+    <div onClick="{{ nav.teamhome }}" style="margin-top:28px;padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.28)">CREATE TEAM</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onToday }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.4px;color:#C8FF3D">WED 26 AUG · DAY 41</div>
+        <div style="font-size:40px;font-weight:800;letter-spacing:-1.8px;line-height:42px;margin-top:8px">{{ todayTitle }}</div>
+      </div>
+      <div onClick="{{ toggleGlass }}" style="margin-top:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(242,245,241,.16);font-size:11px;font-weight:700;color:rgba(242,245,241,.6);cursor:pointer;white-space:nowrap">{{ glassLabel }}</div>
+    </div>
+
+    <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+    <div style="font-size:15px;line-height:21px;color:rgba(242,245,241,.5);margin-top:10px;max-width:300px">Five taps. Tap ⓘ on any row if you want the wording.</div>
+    <div style="display:flex;flex-direction:column;gap:22px;margin-top:26px">
+      <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="5">
+        <div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">{{ b.short }}</div>
+            <div onClick="{{ b.info }}" style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(242,245,241,.28);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-style:italic;color:rgba(242,245,241,.55);cursor:pointer;flex-shrink:0" style-hover="border-color:#C8FF3D;color:#C8FF3D">i</div>
+            <div style="flex:1"></div>
+            <div style="{{ b.answerStyle }}">{{ b.answer }}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px">
+            <sc-for list="{{ b.opts }}" as="o" hint-placeholder-count="5">
+              <div onClick="{{ o.tap }}" style="{{ o.style }}">{{ o.v }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <div>
+        <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">AVAILABILITY</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <sc-for list="{{ avails }}" as="a" hint-placeholder-count="3">
+            <div onClick="{{ a.tap }}" style="{{ a.style }}">{{ a.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ showCoach }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="height:1px;flex:1;background:rgba(200,255,61,.25)"></div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:#C8FF3D">QUESTIONS FROM YOUR COACH</div>
+          <div style="height:1px;flex:1;background:rgba(200,255,61,.25)"></div>
+        </div>
+        <div style="margin-top:14px;border-radius:20px;padding:16px;background:rgba(200,255,61,.06);border:1px solid rgba(200,255,61,.22)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+            <div style="font-size:16.5px;font-weight:700;letter-spacing:-.2px">Hydration since last session</div>
+            <div style="font-size:10.5px;font-weight:800;color:rgba(242,245,241,.4)">OPTIONAL</div>
+          </div>
+          <div style="font-size:12.5px;color:rgba(242,245,241,.45);margin-top:3px">Riverside FC · Coach Mel</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px">
+            <sc-for list="{{ coachOpts }}" as="o" hint-placeholder-count="5">
+              <div onClick="{{ o.tap }}" style="{{ o.style }}">{{ o.v }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <div onClick="{{ nav.bodymap }}" style="padding:16px;border-radius:18px;border:1px dashed rgba(242,245,241,.2);text-align:center;font-size:15px;font-weight:600;color:rgba(242,245,241,.6);cursor:pointer" style-hover="border-color:#C8FF3D;color:#C8FF3D">Something hurts? Mark it on the body map</div>
+      <div style="height:120px"></div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:rise .36s cubic-bezier(.2,.8,.2,1) both">
+      <div style="margin-top:12px;display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;background:rgba(200,255,61,.14);font-size:11.5px;font-weight:800;letter-spacing:.5px;color:#C8FF3D">SAVED ON DEVICE · SYNCING</div>
+      <div style="font-size:20px;font-weight:600;letter-spacing:-.4px;margin-top:16px;max-width:300px;color:rgba(242,245,241,.75)">That took 38 seconds. Same time tomorrow.</div>
+      <div style="margin-top:18px;border-radius:26px;padding:18px 16px 20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">TODAY VS BASELINE</div>
+          <div style="font-size:11.5px;font-weight:700;color:rgba(242,245,241,.35)">14 DAYS</div>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:2px">
+          <svg width="252" height="252" viewBox="0 0 200 200">
+            <polygon points="100,28 168.5,77.8 142.3,158.2 57.7,158.2 31.5,77.8" fill="none" stroke="rgba(242,245,241,.09)" stroke-width="1"></polygon>
+            <polygon points="100,52 145.7,85.2 128.2,138.8 71.8,138.8 54.3,85.2" fill="none" stroke="rgba(242,245,241,.09)" stroke-width="1"></polygon>
+            <polygon points="100,76 122.8,92.6 114.1,119.4 85.9,119.4 77.2,92.6" fill="none" stroke="rgba(242,245,241,.09)" stroke-width="1"></polygon>
+            <polygon points="{{ basePts }}" fill="none" stroke="rgba(242,245,241,.3)" stroke-width="1.5" stroke-dasharray="3 4"></polygon>
+            <polygon points="{{ radarPts }}" fill="none" stroke="#C8FF3D" stroke-width="2.5" stroke-linejoin="round"></polygon>
+            <sc-for list="{{ radarDots }}" as="d" hint-placeholder-count="5">
+              <circle cx="{{ d.x }}" cy="{{ d.y }}" r="4" fill="#C8FF3D"></circle>
+            </sc-for>
+            <text x="100" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">FATIGUE</text>
+            <text x="186" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">SLEEP</text>
+            <text x="152" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">MUSCLES</text>
+            <text x="48" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">STRESS</text>
+            <text x="14" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">MOOD</text>
+          </svg>
+        </div>
+        <div style="font-size:14px;line-height:20px;color:rgba(242,245,241,.6);border-top:1px solid rgba(242,245,241,.08);padding-top:12px">{{ doneSummary }}</div>
+      </div>
+      <div onClick="{{ nav.history }}" style="margin-top:12px;padding:17px;border-radius:18px;background:rgba(242,245,241,.06);border:1px solid rgba(242,245,241,.1);text-align:center;font-size:16px;font-weight:700;color:#C8FF3D;cursor:pointer">See your history</div>
+      <div onClick="{{ reset }}" style="margin-top:10px;text-align:center;font-size:13px;color:rgba(242,245,241,.35);cursor:pointer">Restart the check-in (demo)</div>
+      <div style="height:110px"></div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onBody }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.today }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Back</div>
+    <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;line-height:35px;margin-top:12px">Where does it hurt?</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:8px;max-width:310px">Tap anywhere it's sore. One tap is enough — the rest is optional.</div>
+    <div style="display:flex;gap:6px;margin-top:16px;padding:3px;background:rgba(242,245,241,.07);border-radius:12px;width:fit-content">
+      <div onClick="{{ showFront }}" style="{{ frontTab }}">FRONT</div>
+      <div onClick="{{ showBack }}" style="{{ backTab }}">BACK</div>
+    </div>
+    <div style="position:relative;margin-top:16px;height:376px;border-radius:26px;background:repeating-linear-gradient(135deg,#12150F 0 8px,#171A14 8px 16px);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <div style="position:absolute;top:12px;left:14px;font:700 10.5px ui-monospace,Menlo,monospace;color:rgba(242,245,241,.4)">{{ bodyPlaceholder }}</div>
+      <sc-for list="{{ zones }}" as="z" hint-placeholder-count="7">
+        <div onClick="{{ z.tap }}" style="{{ z.style }}">{{ z.mark }}</div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ anyMarks }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:14px;border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:16px;font-weight:700">{{ marksTitle }}</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <sc-for list="{{ severities }}" as="s" hint-placeholder-count="3">
+          <div onClick="{{ s.tap }}" style="{{ s.style }}">{{ s.label }}</div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;padding:13px 14px;border-radius:14px;background:rgba(242,245,241,.05);font-size:14.5px;color:rgba(242,245,241,.35)">Add a note (optional)</div>
+    </div>
+    </sc-if>
+    <div onClick="{{ finishBody }}" style="margin-top:14px;padding:18px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 28px rgba(200,255,61,.26)">DONE</div>
+    <div style="height:110px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onHistory }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div style="font-size:40px;font-weight:800;letter-spacing:-1.8px;line-height:42px">History</div>
+    <div style="margin-top:20px;border-radius:26px;padding:18px 16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">WELLNESS SCORE</div>
+        <div style="font-size:11.5px;font-weight:700;color:rgba(242,245,241,.35)">LAST 12 DAYS</div>
+      </div>
+      <svg width="100%" height="132" viewBox="0 0 320 132" preserveAspectRatio="none" style="margin-top:12px;display:block">
+        <line x1="0" y1="64" x2="320" y2="64" stroke="rgba(242,245,241,.28)" stroke-width="1" stroke-dasharray="3 4"></line>
+        <path d="M8,80 L34,70 L60,86 L86,62 L112,54 L138,72 L164,48 L190,56 L216,42 L242,66 L268,50 L294,34" fill="none" stroke="#C8FF3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        <circle cx="294" cy="34" r="5" fill="#C8FF3D"></circle>
+      </svg>
+      <div style="display:flex;gap:18px;font-size:11.5px;font-weight:700;color:rgba(242,245,241,.45)">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:2.5px;background:#C8FF3D;border-radius:2px"></div>YOU</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:0;border-top:2px dashed rgba(242,245,241,.4)"></div>BASELINE</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;border-radius:26px;padding:18px 16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">AUGUST</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:12px">
+        <sc-for list="{{ calendar }}" as="d" hint-placeholder-count="31">
+          <div style="{{ d.cell }}">{{ d.n }}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;color:rgba(242,245,241,.4);margin-top:14px">
+        <span>BELOW</span>
+        <div style="flex:1;height:6px;border-radius:3px;background:linear-gradient(90deg,#FF5A4E,#FFC24D,#C8FF3D)"></div>
+        <span>ABOVE</span>
+      </div>
+    </div>
+    <div style="margin-top:14px;border-radius:26px;padding:18px 16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);display:flex;align-items:center;gap:14px">
+      <div style="width:46px;height:46px;border-radius:15px;background:rgba(200,255,61,.14);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#C8FF3D;flex-shrink:0">↑</div>
+      <div>
+        <div style="font-size:16px;font-weight:700">Load this week: up</div>
+        <div style="font-size:13px;line-height:18px;color:rgba(242,245,241,.5);margin-top:2px">4 sessions vs 3 last week. Keep an eye on soreness.</div>
+      </div>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onTeams }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div style="font-size:40px;font-weight:800;letter-spacing:-1.8px;line-height:42px">Teams</div>
+    <div onClick="{{ createTeamTap }}" style="margin-top:20px;padding:18px;border-radius:22px;background:rgba(200,255,61,.08);border:1px solid rgba(200,255,61,.3);cursor:pointer">
+      <div style="font-size:17px;font-weight:800;color:#C8FF3D;letter-spacing:-.2px">+ CREATE A TEAM</div>
+      <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.55);margin-top:5px">See who needs attention today. Free 7-day trial, no card.</div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);margin:24px 4px 10px">YOUR TEAMS</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div onClick="{{ nav.teaminfo }}" style="padding:15px;border-radius:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);display:flex;align-items:center;gap:13px;cursor:pointer">
+        <div style="width:40px;height:40px;border-radius:13px;background:#C8FF3D;color:#0B0D0C;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800">RF</div>
+        <div style="flex:1"><div style="font-size:17px;font-weight:700">Riverside FC</div><div style="font-size:13px;color:rgba(242,245,241,.45);margin-top:1px">You're an athlete here</div></div>
+        <div style="color:rgba(242,245,241,.3);font-size:18px">›</div>
+      </div>
+      <div onClick="{{ nav.teamhome }}" style="padding:15px;border-radius:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);display:flex;align-items:center;gap:13px;cursor:pointer">
+        <div style="width:40px;height:40px;border-radius:13px;background:rgba(242,245,241,.14);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800">UH</div>
+        <div style="flex:1"><div style="font-size:17px;font-weight:700">Uni Hockey 2s</div><div style="font-size:13px;color:#C8FF3D;margin-top:1px">You coach · trial, 4 days left</div></div>
+        <div style="color:rgba(242,245,241,.3);font-size:18px">›</div>
+      </div>
+    </div>
+    <div onClick="{{ nav.join }}" style="margin-top:16px;padding:16px;border-radius:20px;border:1px solid rgba(242,245,241,.14);text-align:center;font-size:16px;font-weight:700;color:rgba(242,245,241,.8);cursor:pointer">Join a team with a code</div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onJoin }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.teams }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Teams</div>
+    <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;line-height:35px;margin-top:12px">Enter your join code</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:8px;max-width:300px">Six characters from your coach. Or open the link they sent you.</div>
+    <div style="display:flex;gap:8px;margin-top:24px">
+      <sc-for list="{{ codeCells }}" as="c" hint-placeholder-count="6">
+        <div style="{{ c.style }}">{{ c.ch }}</div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ codeError }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:14px;display:flex;align-items:flex-start;gap:9px;padding:13px 14px;border-radius:16px;background:rgba(255,90,78,.1);border:1px solid rgba(255,90,78,.3)">
+      <div style="color:#FF5A4E;font-weight:800;font-size:14px">!</div>
+      <div style="font-size:13.5px;line-height:19px;color:#FF8A80">We can't find a team with that code. Check it with your coach — codes are six characters, no spaces.</div>
+    </div>
+    </sc-if>
+    <div style="display:flex;gap:9px;margin-top:18px">
+      <div onClick="{{ tryBadCode }}" style="flex:1;padding:16px;border-radius:18px;border:1px solid rgba(242,245,241,.14);text-align:center;font-size:15px;font-weight:700;color:rgba(242,245,241,.7);cursor:pointer">Try a wrong code</div>
+      <div onClick="{{ nav.consent }}" style="flex:1;padding:16px;border-radius:18px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:15px;font-weight:800;cursor:pointer">Continue</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onConsent }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column">
+    <div style="flex:1">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.5px;color:#C8FF3D">BEFORE YOU JOIN</div>
+      <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;line-height:35px;margin-top:12px">Riverside FC</div>
+      <div style="font-size:15px;color:rgba(242,245,241,.5);margin-top:6px">Coached by Mel Okonjo</div>
+      <div style="margin-top:24px;border-radius:24px;padding:18px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:16px;line-height:24px;color:rgba(242,245,241,.85)">Your coach, <b>Mel Okonjo</b>, will be able to see your daily check-in answers — including your wellness ratings, any pain you report, and answers to their custom questions — for <b>Riverside FC</b>.</div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(242,245,241,.1);display:flex;align-items:flex-start;gap:10px">
+          <div style="width:22px;height:22px;border-radius:50%;background:rgba(200,255,61,.16);color:#C8FF3D;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">✓</div>
+          <div style="font-size:14.5px;line-height:20px;color:#C8FF3D">Your answers are never visible to your teammates.</div>
+        </div>
+      </div>
+    </div>
+    <div onClick="{{ nav.teaminfo }}" style="padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.26)">JOIN TEAM</div>
+    <div onClick="{{ nav.teams }}" style="margin-top:12px;padding:18px;text-align:center;font-size:16px;font-weight:700;color:rgba(242,245,241,.55);cursor:pointer">Not now</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onTeamInfo }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.teams }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Teams</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-top:16px">
+      <div style="width:54px;height:54px;border-radius:17px;background:#C8FF3D;color:#0B0D0C;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800">RF</div>
+      <div><div style="font-size:26px;font-weight:800;letter-spacing:-1px">Riverside FC</div><div style="font-size:13.5px;color:rgba(242,245,241,.45)">Coach Mel Okonjo · 12 athletes</div></div>
+    </div>
+    <div style="margin-top:20px;border-radius:22px;padding:16px;background:rgba(255,194,77,.09);border:1px solid rgba(255,194,77,.3);display:flex;gap:11px">
+      <div style="color:#FFC24D;font-weight:800;font-size:15px">~</div>
+      <div style="font-size:14px;line-height:20px;color:#FFD98A">Your coach's trial has ended — your check-ins still work, but they won't be shared with the team until they resubscribe.</div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);margin:22px 4px 10px">WHAT YOUR COACH CAN SEE</div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <sc-for list="{{ visibilityRows }}" as="r" hint-placeholder-count="4">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(242,245,241,.06)">
+          <div style="{{ r.dot }}"></div>
+          <div style="flex:1;font-size:15.5px">{{ r.label }}</div>
+          <div style="{{ r.valStyle }}">{{ r.val }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:14px;padding:16px;border-radius:20px;border:1px solid rgba(255,90,78,.3);text-align:center;font-size:16px;font-weight:700;color:#FF8A80;cursor:pointer">Leave team</div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onTeamHome }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.4px;color:#C8FF3D">TEAM HOME · WED 26 AUG</div>
+        <div style="font-size:32px;font-weight:800;letter-spacing:-1.4px;line-height:35px;margin-top:8px">Uni Hockey 2s</div>
+      </div>
+      <div onClick="{{ nav.roster }}" style="margin-top:8px;padding:9px 13px;border-radius:14px;background:rgba(242,245,241,.07);border:1px solid rgba(242,245,241,.12);font-size:12.5px;font-weight:700;color:rgba(242,245,241,.75);cursor:pointer;white-space:nowrap">Roster</div>
+    </div>
+
+    <div onClick="{{ nav.locked }}" style="margin-top:18px;border-radius:20px;padding:15px 16px;background:rgba(200,255,61,.08);border:1px solid rgba(200,255,61,.28);display:flex;align-items:center;gap:12px;cursor:pointer">
+      <div style="font-size:26px;font-weight:800;color:#C8FF3D;letter-spacing:-1px">4</div>
+      <div style="flex:1"><div style="font-size:14.5px;font-weight:700;color:#C8FF3D">days left in your trial</div><div style="font-size:12.5px;color:rgba(242,245,241,.5);margin-top:1px">Nothing is charged automatically</div></div>
+      <div style="font-size:12.5px;font-weight:800;color:#C8FF3D">SEE PLANS ›</div>
+    </div>
+
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin:26px 4px 10px">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">WORTH A WORD TODAY · 3</div>
+      <div style="font-size:11.5px;font-weight:700;color:rgba(242,245,241,.35)">BY SEVERITY</div>
+    </div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <sc-for list="{{ flagged }}" as="f" hint-placeholder-count="3">
+        <div onClick="{{ f.tap }}" style="padding:15px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(242,245,241,.06);cursor:pointer">
+          <div style="{{ f.iconStyle }}">{{ f.icon }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:16.5px;font-weight:700;letter-spacing:-.2px">{{ f.name }}</div>
+            <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
+              <sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="2">
+                <span style="{{ c.style }}">{{ c.label }}</span>
+              </sc-for>
+            </div>
+          </div>
+          <div style="color:rgba(242,245,241,.3);font-size:18px">›</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div onClick="{{ toggleMissing }}" style="margin-top:14px;border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);cursor:pointer">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-size:26px;font-weight:800;letter-spacing:-1px">8<span style="color:rgba(242,245,241,.35);font-size:18px">/12</span></div>
+        <div style="flex:1"><div style="font-size:15.5px;font-weight:700">checked in today</div><div style="font-size:12.5px;color:rgba(242,245,241,.45);margin-top:1px">{{ missingLabel }}</div></div>
+        <div style="{{ chevStyle }}">›</div>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:14px">
+        <sc-for list="{{ completion }}" as="c" hint-placeholder-count="12">
+          <div style="{{ c.style }}"></div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ missingOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(242,245,241,.08);display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ missing }}" as="m" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:11px">
+            <div style="width:32px;height:32px;border-radius:11px;background:rgba(242,245,241,.09);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:rgba(242,245,241,.6)">{{ m.initials }}</div>
+            <div style="flex:1;font-size:15.5px">{{ m.name }}</div>
+            <div onClick="{{ m.remind }}" style="{{ m.btnStyle }}">{{ m.btn }}</div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+    </div>
+
+    <div style="margin-top:14px;border-radius:22px;padding:18px 16px 14px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">TEAM AVERAGE · 2 WEEKS</div>
+        <div style="font-size:12px;font-weight:800;color:#FFC24D">↓ 6% VS BASELINE</div>
+      </div>
+      <svg width="100%" height="88" viewBox="0 0 320 88" preserveAspectRatio="none" style="margin-top:12px;display:block">
+        <line x1="0" y1="40" x2="320" y2="40" stroke="rgba(242,245,241,.28)" stroke-width="1" stroke-dasharray="3 4"></line>
+        <path d="M6,36 L30,32 L54,40 L78,34 L102,44 L126,38 L150,48 L174,42 L198,52 L222,46 L246,56 L270,50 L294,58 L314,54" fill="none" stroke="#C8FF3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </div>
+
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin:26px 4px 10px">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">SQUAD SIGNALS · BY QUESTION</div>
+      <div style="font-size:11px;font-weight:700;color:rgba(242,245,241,.3)">TAP A ROW</div>
+    </div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <sc-for list="{{ signals }}" as="g" hint-placeholder-count="5">
+        <div onClick="{{ g.tap }}" style="{{ g.wrap }}">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:66px;flex-shrink:0">
+              <div style="font-size:11.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.75)">{{ g.short }}</div>
+              <div style="{{ g.deltaStyle }}">{{ g.delta }}</div>
+            </div>
+            <div style="flex:1;min-width:0">
+              <svg width="100%" height="34" viewBox="0 0 200 34" preserveAspectRatio="none" style="display:block;width:100%;overflow:visible">
+                <line x1="0" y1="17" x2="200" y2="17" stroke="rgba(242,245,241,.14)" stroke-width="1" stroke-dasharray="2 4"></line>
+                <path d="{{ g.spark }}" fill="none" stroke="{{ g.tone }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="196" cy="{{ g.lastY }}" r="3.2" fill="{{ g.tone }}"></circle>
+              </svg>
+            </div>
+            <div style="width:52px;flex-shrink:0;text-align:right">
+              <div style="{{ g.avgStyle }}">{{ g.avg }}</div>
+              <div style="font-size:9.5px;font-weight:800;letter-spacing:.5px;color:rgba(242,245,241,.3)">TODAY</div>
+            </div>
+          </div>
+          <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:16px;padding-top:15px;border-top:1px solid rgba(242,245,241,.08)">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.35)">HOW THE SQUAD ANSWERED TODAY</div>
+            <div style="display:flex;gap:3px;margin-top:10px;height:34px">
+              <sc-for list="{{ g.dist }}" as="d" hint-placeholder-count="5">
+                <div style="{{ d.style }}">{{ d.n }}</div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:3px;margin-top:5px">
+              <sc-for list="{{ g.dist }}" as="d" hint-placeholder-count="5">
+                <div style="{{ d.capStyle }}">{{ d.label }}</div>
+              </sc-for>
+            </div>
+            <div style="font-size:14px;line-height:20px;color:rgba(242,245,241,.7);margin-top:14px">{{ g.note }}</div>
+            <sc-if value="{{ g.hasAction }}" hint-placeholder-val="{{ true }}">
+            <div style="{{ g.actionWrap }}">
+              <div style="{{ g.actionIcon }}">→</div>
+              <div style="flex:1">
+                <div style="{{ g.actionLabelStyle }}">{{ g.actionLabel }}</div>
+                <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.7);margin-top:2px">{{ g.action }}</div>
+              </div>
+            </div>
+            </sc-if>
+            <div style="font-size:12.5px;color:rgba(242,245,241,.4);margin-top:12px">Lowest today: {{ g.lowest }}</div>
+          </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;gap:9px;margin-top:14px">
+      <div onClick="{{ nav.responses }}" style="flex:1;padding:16px 12px;border-radius:18px;background:rgba(242,245,241,.06);border:1px solid rgba(242,245,241,.1);text-align:center;font-size:14.5px;font-weight:700;cursor:pointer">All responses</div>
+      <div onClick="{{ nav.custom }}" style="flex:1;padding:16px 12px;border-radius:18px;background:rgba(242,245,241,.06);border:1px solid rgba(242,245,241,.1);text-align:center;font-size:14.5px;font-weight:700;cursor:pointer">Questions</div>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onAthlete }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.teamhome }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Team Home</div>
+    <div style="display:flex;align-items:center;gap:13px;margin-top:16px">
+      <div style="width:52px;height:52px;border-radius:17px;background:rgba(255,90,78,.16);color:#FF5A4E;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800">PN</div>
+      <div style="flex:1">
+        <div style="font-size:26px;font-weight:800;letter-spacing:-1px">Priya N.</div>
+        <div style="font-size:13px;color:rgba(242,245,241,.45)">Checked in 07:12 · member since May</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;border-radius:20px;padding:14px 15px;background:rgba(255,90,78,.09);border:1px solid rgba(255,90,78,.28);display:flex;gap:11px">
+      <div style="color:#FF5A4E;font-weight:800;font-size:15px">!</div>
+      <div style="font-size:14px;line-height:20px;color:#FF8A80">Flagged today: hamstring pain reported, and a third day below her own baseline. Worth a conversation, not an alarm.</div>
+    </div>
+    <div style="margin-top:14px;border-radius:26px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">TODAY VS HER BASELINE</div>
+      <div style="display:flex;justify-content:center">
+        <svg width="230" height="230" viewBox="0 0 200 200">
+          <polygon points="100,28 168.5,77.8 142.3,158.2 57.7,158.2 31.5,77.8" fill="none" stroke="rgba(242,245,241,.09)" stroke-width="1"></polygon>
+          <polygon points="100,52 145.7,85.2 128.2,138.8 71.8,138.8 54.3,85.2" fill="none" stroke="rgba(242,245,241,.09)" stroke-width="1"></polygon>
+          <polygon points="100,76 122.8,92.6 114.1,119.4 85.9,119.4 77.2,92.6" fill="none" stroke="rgba(242,245,241,.09)" stroke-width="1"></polygon>
+          <polygon points="100,49 148,83.4 130,143 70,143 52,83.4" fill="none" stroke="rgba(242,245,241,.3)" stroke-width="1.5" stroke-dasharray="3 4"></polygon>
+          <polygon points="100,72 128,91 116,126 84,131 70,90" fill="none" stroke="#FF5A4E" stroke-width="2.5" stroke-linejoin="round"></polygon>
+          <circle cx="100" cy="72" r="4" fill="#FF5A4E"></circle><circle cx="128" cy="91" r="4" fill="#FF5A4E"></circle><circle cx="116" cy="126" r="4" fill="#FF5A4E"></circle><circle cx="84" cy="131" r="4" fill="#FF5A4E"></circle><circle cx="70" cy="90" r="4" fill="#FF5A4E"></circle>
+          <text x="100" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">FATIGUE</text>
+          <text x="186" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">SLEEP</text>
+          <text x="152" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">MUSCLES</text>
+          <text x="48" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">STRESS</text>
+          <text x="14" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(242,245,241,.45)">MOOD</text>
+        </svg>
+      </div>
+    </div>
+    <div style="margin-top:14px;border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">PAIN REPORTED</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:36px;height:36px;border-radius:12px;background:rgba(255,90,78,.16);color:#FF5A4E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">SEV</div>
+          <div style="flex:1"><div style="font-size:15.5px;font-weight:600">Left hamstring · severe</div><div style="font-size:12.5px;color:rgba(242,245,241,.45)">Today 07:12 · "tight since Sunday's game"</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:36px;height:36px;border-radius:12px;background:rgba(255,194,77,.16);color:#FFC24D;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">MOD</div>
+          <div style="flex:1"><div style="font-size:15.5px;font-weight:600">Left hamstring · moderate</div><div style="font-size:12.5px;color:rgba(242,245,241,.45)">Mon 24 Aug</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">SESSION LOAD · RPE</div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:82px;margin-top:14px">
+        <sc-for list="{{ rpeBars }}" as="b" hint-placeholder-count="10">
+          <div style="{{ b.style }}"></div>
+        </sc-for>
+      </div>
+      <div style="font-size:13px;color:rgba(242,245,241,.5);margin-top:12px">Three sessions at RPE 8+ in the last five days.</div>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onRoster }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.teamhome }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Team Home</div>
+    <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;margin-top:12px">Roster</div>
+    <div style="margin-top:18px;border-radius:24px;padding:20px 16px;background:rgba(200,255,61,.07);border:1px solid rgba(200,255,61,.26);text-align:center">
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.5)">JOIN CODE</div>
+      <div style="font-size:38px;font-weight:800;letter-spacing:6px;color:#C8FF3D;margin-top:8px">HK2S94</div>
+      <div style="margin-top:14px;padding:14px;border-radius:16px;background:#C8FF3D;color:#0B0D0C;font-size:15.5px;font-weight:800;cursor:pointer">SHARE INVITE</div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);margin:24px 4px 10px">12 MEMBERS</div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <sc-for list="{{ roster }}" as="m" hint-placeholder-count="5">
+        <div style="padding:14px 15px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(242,245,241,.06)">
+          <div style="width:36px;height:36px;border-radius:12px;background:rgba(242,245,241,.09);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;color:rgba(242,245,241,.65)">{{ m.initials }}</div>
+          <div style="flex:1"><div style="font-size:16px;font-weight:600">{{ m.name }}</div><div style="{{ m.roleStyle }}">{{ m.role }}</div></div>
+          <div style="font-size:20px;color:rgba(242,245,241,.3);letter-spacing:1px">···</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onCustom }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.teamhome }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Team Home</div>
+    <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;margin-top:12px">Your questions</div>
+    <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.5);margin-top:8px;max-width:305px">Up to two. They appear at the end of every athlete's check-in, under their own divider.</div>
+    <div style="margin-top:20px;border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.4)">QUESTION 1</div>
+      <div style="font-size:17px;font-weight:600;margin-top:7px">Hydration since last session</div>
+      <div style="display:flex;gap:7px;margin-top:14px">
+        <sc-for list="{{ qTypes }}" as="t" hint-placeholder-count="3">
+          <div onClick="{{ t.tap }}" style="{{ t.style }}">{{ t.label }}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid rgba(242,245,241,.08)">
+        <div style="flex:1;font-size:15.5px">Required</div>
+        <div onClick="{{ toggleRequired }}" style="{{ reqTrack }}"><div style="width:27px;height:27px;border-radius:14px;background:#fff"></div></div>
+      </div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:#C8FF3D;margin:22px 4px 10px">LIVE PREVIEW · WHAT ATHLETES SEE</div>
+    <div style="border-radius:20px;padding:16px;background:rgba(200,255,61,.06);border:1px solid rgba(200,255,61,.22)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font-size:16.5px;font-weight:700">Hydration since last session</div>
+        <div style="font-size:10.5px;font-weight:800;color:rgba(242,245,241,.4)">{{ reqLabel }}</div>
+      </div>
+      <div style="{{ previewRowStyle }}">
+        <sc-for list="{{ previewOpts }}" as="o" hint-placeholder-count="5">
+          <div style="{{ o.style }}">{{ o.v }}</div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:16px;border-radius:20px;border:1px dashed rgba(242,245,241,.2);text-align:center;font-size:15.5px;font-weight:700;color:rgba(242,245,241,.6);cursor:pointer">+ Add question 2</div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onResponses }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div onClick="{{ nav.teamhome }}" style="font-size:15px;font-weight:600;color:#C8FF3D;cursor:pointer">‹ Team Home</div>
+    <div style="font-size:32px;font-weight:800;letter-spacing:-1.3px;margin-top:12px">All responses</div>
+    <div style="font-size:13.5px;color:rgba(242,245,241,.45);margin-top:6px">Today · 8 of 12 · newest first</div>
+    <div style="display:flex;gap:8px;padding:0 2px;margin-top:18px">
+      <div style="width:104px;font-size:10.5px;font-weight:800;letter-spacing:.8px;color:rgba(242,245,241,.35)">ATHLETE</div>
+      <sc-for list="{{ respCols }}" as="c" hint-placeholder-count="5">
+        <div style="flex:1;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.5px;color:rgba(242,245,241,.35)">{{ c.label }}</div>
+      </sc-for>
+    </div>
+    <div style="margin-top:8px;border-radius:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <sc-for list="{{ responses }}" as="r" hint-placeholder-count="8">
+        <div style="padding:12px 10px;display:flex;gap:8px;align-items:center;border-bottom:1px solid rgba(242,245,241,.06)">
+          <div style="width:104px;min-width:0;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.name }}</div>
+          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="5">
+            <div style="{{ c.style }}">{{ c.v }}</div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onLocked }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 20px 40px;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column">
+    <div onClick="{{ nav.teamhome }}" style="font-size:15px;font-weight:600;color:rgba(242,245,241,.45);cursor:pointer">‹ Back (demo)</div>
+    <div style="flex:1;padding-top:30px">
+      <div style="width:56px;height:56px;border-radius:18px;background:rgba(255,194,77,.14);color:#FFC24D;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800">⌧</div>
+      <div style="font-size:34px;font-weight:800;letter-spacing:-1.5px;line-height:37px;margin-top:18px">Your trial has ended</div>
+      <div style="font-size:15.5px;line-height:22px;color:rgba(242,245,241,.6);margin-top:12px;max-width:310px">Subscribe to keep coaching <b style="color:#F2F5F1">Uni Hockey 2s</b>. Everything your squad has logged is exactly where you left it.</div>
+      <div style="margin-top:22px;border-radius:22px;padding:16px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div style="width:22px;height:22px;border-radius:50%;background:rgba(200,255,61,.16);color:#C8FF3D;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">✓</div>
+          <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.8)">147 check-ins from 12 athletes kept safe</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;margin-top:11px">
+          <div style="width:22px;height:22px;border-radius:50%;background:rgba(200,255,61,.16);color:#C8FF3D;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">✓</div>
+          <div style="font-size:14.5px;line-height:20px;color:rgba(242,245,241,.8)">Subscribe whenever the club signs off — weeks later is fine</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;font-size:13.5px;line-height:19px;color:rgba(242,245,241,.45)">Your own check-ins, history and RPE logs are unaffected and stay free.</div>
+    </div>
+    <div style="padding:19px;border-radius:20px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.28)">SUBSCRIBE · £8/MONTH</div>
+    <div style="text-align:center;font-size:14px;color:rgba(242,245,241,.4);margin-top:14px">Restore purchases</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onInbox }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div style="font-size:40px;font-weight:800;letter-spacing:-1.8px;line-height:42px">Inbox</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-top:20px">
+      <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="4">
+        <div style="{{ n.wrap }}">
+          <div style="{{ n.dot }}"></div>
+          <div style="flex:1">
+            <div style="font-size:15px;line-height:21px;color:rgba(242,245,241,.9)">{{ n.text }}</div>
+            <div style="font-size:12px;font-weight:700;color:rgba(242,245,241,.35);margin-top:5px">{{ n.time }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onSettings }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:58px 16px 0">
+    <div style="font-size:40px;font-weight:800;letter-spacing:-1.8px;line-height:42px">Settings</div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);margin:22px 4px 10px">REMINDERS</div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <div style="padding:15px 16px;display:flex;align-items:center;border-bottom:1px solid rgba(242,245,241,.06)"><div style="flex:1;font-size:16.5px">Daily check-in reminder</div><div style="width:51px;height:31px;border-radius:16px;background:#C8FF3D;padding:2px;box-sizing:border-box;display:flex;justify-content:flex-end"><div style="width:27px;height:27px;border-radius:14px;background:#0B0D0C"></div></div></div>
+      <div style="padding:15px 16px;display:flex;align-items:center"><div style="flex:1;font-size:16.5px">Time</div><div style="font-size:16.5px;color:rgba(242,245,241,.5)">18:30</div></div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);margin:22px 4px 10px">APPEARANCE</div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <div style="padding:15px 16px;display:flex;align-items:center;border-bottom:1px solid rgba(242,245,241,.06)"><div style="flex:1;font-size:16.5px">Theme</div><div style="font-size:16.5px;color:rgba(242,245,241,.5)">Dark</div></div>
+      <div onClick="{{ toggleGlass }}" style="padding:15px 16px;display:flex;align-items:center;cursor:pointer"><div style="flex:1"><div style="font-size:16.5px">Reduce transparency</div><div style="font-size:12.5px;color:rgba(242,245,241,.45);margin-top:2px">Follows your iOS accessibility setting</div></div><div style="{{ toggleTrack }}"><div style="width:27px;height:27px;border-radius:14px;background:#fff"></div></div></div>
+    </div>
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);margin:22px 4px 10px">ACCOUNT</div>
+    <div style="border-radius:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <div onClick="{{ nav.inbox }}" style="padding:15px 16px;display:flex;align-items:center;border-bottom:1px solid rgba(242,245,241,.06);cursor:pointer"><div style="flex:1;font-size:16.5px">Notifications inbox</div><div style="color:rgba(242,245,241,.3);font-size:18px">›</div></div>
+      <div style="padding:15px 16px;display:flex;align-items:center;border-bottom:1px solid rgba(242,245,241,.06)"><div style="flex:1;font-size:16.5px">Restore purchases</div><div style="color:rgba(242,245,241,.3);font-size:18px">›</div></div>
+      <div style="padding:15px 16px;display:flex;align-items:center;border-bottom:1px solid rgba(242,245,241,.06)"><div style="flex:1;font-size:16.5px">sam@riverside.club</div><div style="color:rgba(242,245,241,.3);font-size:18px">›</div></div>
+      <div style="padding:15px 16px;font-size:16.5px;color:#FF8A80">Log out</div>
+    </div>
+    <div style="height:130px"></div>
+  </div>
+  </sc-if>
+
+  </div>
+
+  <sc-if value="{{ showSubmit }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;left:0;right:0;bottom:96px;padding:0 16px;z-index:30">
+    <div onClick="{{ submit }}" style="{{ submitStyle }}">{{ submitLabel }}</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ showFab }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ openRpe }}" style="position:absolute;right:16px;bottom:98px;z-index:30;cursor:pointer">
+    <div style="{{ fabStyle }}"><div style="position:relative;font-size:15px;font-weight:800;color:#C8FF3D;letter-spacing:.2px">+ LOG SESSION</div></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+  <div style="{{ tabBarStyle }}">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <div onClick="{{ t.tap }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:4px 0">
+        <div style="{{ t.glyph }}"></div>
+        <div style="{{ t.cap }}">{{ t.label }}</div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ legendOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLegend }}" style="position:absolute;inset:0;z-index:40;background:rgba(5,6,5,.55)"></div>
+  <div style="{{ sheetStyle }}">
+    <div style="position:relative">
+      <div style="width:38px;height:5px;border-radius:3px;background:rgba(242,245,241,.22);margin:0 auto 18px"></div>
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.3px;color:#C8FF3D">{{ legendShort }}</div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:29px;margin-top:8px">{{ legendLong }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:18px">
+        <sc-for list="{{ legendRows }}" as="r" hint-placeholder-count="5">
+          <div onClick="{{ r.tap }}" style="{{ r.wrap }}">
+            <div style="{{ r.badge }}">{{ r.n }}</div>
+            <div style="{{ r.text }}">{{ r.label }}</div>
+            <div style="{{ r.check }}">✓</div>
+          </div>
+        </sc-for>
+      </div>
+      <div onClick="{{ closeLegend }}" style="margin-top:16px;padding:17px;border-radius:18px;background:rgba(242,245,241,.08);border:1px solid rgba(242,245,241,.12);text-align:center;font-size:16px;font-weight:700;cursor:pointer">Close</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ rpeOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeRpe }}" style="position:absolute;inset:0;z-index:40;background:rgba(5,6,5,.55)"></div>
+  <div style="{{ sheetStyle }}">
+    <div style="position:relative">
+      <div style="width:38px;height:5px;border-radius:3px;background:rgba(242,245,241,.22);margin:0 auto 18px"></div>
+      <div style="font-size:24px;font-weight:800;letter-spacing:-.9px;line-height:29px">How hard did that session feel?</div>
+      <div style="font-size:14px;color:rgba(242,245,241,.5);margin-top:6px">1 is a stroll. 10 is everything you had.</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:18px">
+        <sc-for list="{{ rpeOpts }}" as="r" hint-placeholder-count="10">
+          <div onClick="{{ r.tap }}" style="{{ r.style }}">{{ r.v }}</div>
+        </sc-for>
+      </div>
+      <div style="margin-top:14px;padding:14px;border-radius:16px;background:rgba(242,245,241,.05);font-size:14.5px;color:rgba(242,245,241,.35)">What was the session? (optional)</div>
+      <div onClick="{{ saveRpe }}" style="{{ rpeSaveStyle }}">{{ rpeSaveLabel }}</div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">Try next: "the ⓘ legend should be inline, not a sheet" · "tablet split view for Team Home" · "now do the Android/Material version"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:1060},&quot;checkInLength&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;full&quot;,&quot;short&quot;],&quot;default&quot;:&quot;full&quot;,&quot;tsType&quot;:&quot;'full'|'short'&quot;,&quot;section&quot;:&quot;A/B hooks&quot;},&quot;quizLength&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;full&quot;,&quot;short&quot;],&quot;default&quot;:&quot;full&quot;,&quot;tsType&quot;:&quot;'full'|'short'&quot;,&quot;section&quot;:&quot;A/B hooks&quot;},&quot;showCoachQuestions&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;A/B hooks&quot;}}">
+const L = '#C8FF3D', HI = '#FF5A4E', WA = '#FFC24D';
+const DIM = 'rgba(242,245,241,.5)', FAINT = 'rgba(242,245,241,.35)';
+
+const QUESTIONS = [
+  { short: 'FATIGUE', long: 'How fatigued are you feeling today?', responses: ['Always tired', 'More tired than normal', 'Normal', 'Fresh', 'Very fresh'] },
+  { short: 'SLEEP', long: 'How was your quality of sleep last night?', responses: ['Insomnia', 'Restless sleep', 'Difficulty falling asleep', 'Good', 'Very restful'] },
+  { short: 'MUSCLES', long: 'How is your general soreness of muscles?', responses: ['Very sore', 'Increased soreness', 'Normal', 'Feeling good', 'Feeling great'] },
+  { short: 'STRESS', long: 'How stressed are you feeling in general?', responses: ['Highly stressed', 'Feeling stressed', 'Normal', 'Relaxed', 'Very relaxed'] },
+  { short: 'MOOD', long: 'What is your overall mood level?', responses: ['Highly annoyed, irritable or down', 'Snappiness at teammates or family', 'Less interested than normal', 'A generally good mood', 'Very positive mood'] },
+];
+
+const SIGNALS = [
+  {
+    short: 'FATIGUE', higherIsBetter: true,
+    series: [3.6, 3.5, 3.6, 3.4, 3.3, 3.4, 3.2, 3.1, 3.2, 3.0, 2.9, 2.9, 2.7, 2.6],
+    dist: [1, 3, 5, 2, 1],
+    note: 'Down a full point over two weeks, and eight of twelve are at 3 or below. This is squad-wide, not one or two tired individuals.',
+    action: 'A lighter Thursday, or an early-night nudge before Saturday. A change here shows up in this line within about three days.',
+    lowest: 'Priya N., Jonah A., Cara D.',
+  },
+  {
+    short: 'SLEEP', higherIsBetter: true,
+    series: [3.4, 3.5, 3.3, 3.4, 3.2, 3.3, 3.5, 3.4, 3.3, 3.2, 3.4, 3.3, 3.2, 3.1],
+    dist: [0, 2, 6, 3, 1],
+    note: 'Broadly flat. The dip in the last three days tracks the late kick-off on Sunday rather than anything structural.',
+    action: '',
+    lowest: 'Tom B., Ellis W.',
+  },
+  {
+    short: 'MUSCLES', higherIsBetter: true,
+    series: [3.8, 3.6, 3.5, 3.4, 3.2, 3.3, 3.1, 3.0, 2.9, 3.0, 2.8, 2.7, 2.6, 2.5],
+    dist: [2, 4, 4, 2, 0],
+    note: 'The steepest decline of the five, and it started the day after the Sunday game. Six athletes are reporting more soreness than normal.',
+    action: 'A mobility or yoga session instead of Thursday conditioning. Cheap to try, and soreness responds faster than fatigue does.',
+    lowest: 'Priya N., Ade K., Liv S.',
+  },
+  {
+    short: 'STRESS', higherIsBetter: true,
+    series: [3.0, 3.1, 3.2, 3.0, 3.3, 3.4, 3.2, 3.5, 3.4, 3.6, 3.5, 3.7, 3.6, 3.8],
+    dist: [0, 1, 3, 5, 3],
+    note: 'The one clearly improving line — up 0.8 since exams finished. Nobody is in the bottom band today.',
+    action: 'Nothing to fix. Useful as the control line when you judge whether a fatigue change is training or life.',
+    lowest: 'Ellis W.',
+  },
+  {
+    short: 'MOOD', higherIsBetter: true,
+    series: [3.9, 3.8, 4.0, 3.9, 3.8, 3.9, 4.0, 3.9, 3.8, 4.0, 3.9, 3.8, 3.9, 4.0],
+    dist: [0, 0, 2, 6, 4],
+    note: 'Steady and high all fortnight. Mood holding while fatigue and soreness fall is a good sign — the squad is tired, not fed up.',
+    action: '',
+    lowest: 'Jonah A.',
+  },
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: 'welcome', tab: 'today',
+    a: [0, 0, 0, 0, 0], avail: 0, coach: 0,
+    glass: true, legend: null,
+    rpeOpen: false, rpe: 0,
+    marks: [], sel: null, sev: {}, face: 'front',
+    step: 1, role: null, sport: null, challenge: null, track: null,
+    teamName: 'Uni Hockey 2s', chip: 'Hockey',
+    missingOpen: false, reminded: {}, codeError: false,
+    qType: 'Scale 1–5', required: false,
+  };
+
+  go(screen) {
+    const tabOf = { today: 'today', done: 'today', bodymap: 'today', history: 'history', teams: 'teams', teaminfo: 'teams', join: 'teams', teamhome: 'teams', athlete: 'teams', roster: 'teams', custom: 'teams', responses: 'teams', locked: 'teams', settings: 'settings', inbox: 'settings' };
+    this.setState({ screen, tab: tabOf[screen] || this.state.tab, legend: null, rpeOpen: false });
+    if (screen === 'personalizing') setTimeout(() => this.setState({ screen: 'preview' }), 1900);
+  }
+
+  tile(on, big) {
+    return `height:${big ? 74 : 58}px;border-radius:${big ? 18 : 16}px;display:flex;align-items:center;justify-content:center;font-size:${on ? (big ? 30 : 24) : (big ? 26 : 20)}px;font-weight:${on ? 800 : 700};cursor:pointer;transition:transform .14s cubic-bezier(.2,.8,.2,1),background .14s;` +
+      (on ? `background:${L};color:#0B0D0C;transform:scale(1.05);box-shadow:0 8px 24px rgba(200,255,61,.32)`
+        : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.32)`);
+  }
+
+  setAnswer(i, v) {
+    this.setState(s => { const a = [...s.a]; a[i] = a[i] === v ? 0 : v; return { a }; });
+  }
+
+  quizSpec() {
+    const coach = this.state.role !== 'Track my own wellness';
+    const steps = [
+      { kicker: 'STEP 1', headline: 'What brings you here?', sub: "Nothing is locked in — you can do both later.", key: 'role', opts: [['Track my own wellness', 'Free, forever'], ['Coach a team', 'Starts a 7-day trial'], ['Both', 'Player-coach or captain']] },
+      { kicker: 'STEP 2', headline: coach ? 'What do you coach?' : 'What do you train for?', sub: '', key: 'sport', opts: [['Football', ''], ['Rugby', ''], ['Hockey', ''], ['Running / endurance', ''], ['Netball / basketball', ''], ['Something else', '']] },
+      coach
+        ? { kicker: 'STEP 3', headline: "What's your biggest challenge right now?", sub: 'This shapes what we put in front of you first.', key: 'challenge', opts: [['Spotting fatigue before it\'s a problem', ''], ['Deciding who plays each session', ''], ['Getting athletes to actually engage', ''], ['Something else', '']] }
+        : { kicker: 'STEP 3', headline: 'What do you want out of this?', sub: '', key: 'challenge', opts: [['Avoid burning out', ''], ['Spot patterns in how I feel', ''], ['Just curious', '']] },
+      { kicker: 'STEP 4', headline: 'How do you track this now, if at all?', sub: 'Honest answers only — this one is for us.', key: 'track', opts: [['Nothing yet', ''], ['A spreadsheet', ''], ['WhatsApp or texts', ''], ['Another app', '']] },
+    ];
+    return (this.props.quizLength ?? 'full') === 'short' ? [steps[0], steps[2]] : steps;
+  }
+
+  renderVals() {
+    const s = this.state, g = s.glass;
+    const scr = s.screen;
+    const coachPath = s.role === 'Coach a team' || s.role === 'Both';
+    const long = (this.props.checkInLength ?? 'full') === 'full';
+    const idxs = long ? [0, 1, 2, 3, 4] : [0, 1, 2];
+
+    const nav = {};
+    ['welcome', 'quiz', 'personalizing', 'preview', 'signup', 'paywall', 'createteam', 'today', 'bodymap', 'done', 'history', 'teams', 'teaminfo', 'join', 'consent', 'teamhome', 'athlete', 'roster', 'custom', 'responses', 'locked', 'inbox', 'settings']
+      .forEach(k => { nav[k] = () => this.go(k); });
+
+    const jumpList = [['Welcome', 'welcome'], ['Quiz', 'quiz'], ['Preview', 'preview'], ['Sign up', 'signup'], ['Paywall', 'paywall'], ['New team', 'createteam'], ['Check-in', 'today'], ['Body map', 'bodymap'], ['Done', 'done'], ['History', 'history'], ['Teams', 'teams'], ['Join', 'join'], ['Consent', 'consent'], ['Team info', 'teaminfo'], ['Team Home', 'teamhome'], ['Athlete', 'athlete'], ['Roster', 'roster'], ['Questions', 'custom'], ['Responses', 'responses'], ['Locked', 'locked'], ['Inbox', 'inbox'], ['Settings', 'settings']];
+
+    const spec = this.quizSpec();
+    const stepSpec = spec[Math.min(s.step, spec.length) - 1];
+
+    const blocks = idxs.map(i => {
+      const q = QUESTIONS[i], v = s.a[i];
+      return {
+        short: q.short,
+        answer: v ? q.responses[v - 1] : '',
+        answerStyle: `font-size:12.5px;font-weight:800;letter-spacing:.3px;text-align:right;max-width:170px;color:${v ? L : 'transparent'}`,
+        info: () => this.setState({ legend: i }),
+        opts: q.responses.map((_, j) => ({ v: j + 1, tap: () => this.setAnswer(i, j + 1), style: this.tile(v === j + 1, true) })),
+      };
+    });
+
+    const answered = idxs.every(i => s.a[i] > 0) && s.avail > 0;
+    const left = idxs.filter(i => !s.a[i]).length + (s.avail ? 0 : 1);
+    const lowCount = idxs.filter(i => s.a[i] && s.a[i] <= 2).length;
+
+    const ang = [-90, -18, 54, 126, 198];
+    const pt = (v, i) => {
+      const r = 14 + (Math.max(1, v) / 5) * 58, t = ang[i] * Math.PI / 180;
+      return [+(100 + r * Math.cos(t)).toFixed(1), +(100 + r * Math.sin(t)).toFixed(1)];
+    };
+    const pts = [0, 1, 2, 3, 4].map(i => pt(s.a[i] || 3, i));
+
+    const legendQ = s.legend != null ? QUESTIONS[s.legend] : null;
+
+    const glassBox = (radius) => g
+      ? `backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(242,245,241,.1);border:.5px solid rgba(242,245,241,.18);box-shadow:inset 1.5px 1.5px 1px rgba(255,255,255,.2),0 12px 34px rgba(0,0,0,.45);border-radius:${radius}px`
+      : `background:#15181500;background-color:#161A15;border:1px solid rgba(242,245,241,.14);box-shadow:0 10px 30px rgba(0,0,0,.5);border-radius:${radius}px`;
+
+    const flagged = [
+      { name: 'Priya N.', icon: '!', tone: HI, chips: [['Hamstring pain', HI], ['3rd day low', null]] },
+      { name: 'Tom B.', icon: '~', tone: WA, chips: [['Sleep below baseline', WA]] },
+      { name: 'Jonah A.', icon: '~', tone: WA, chips: [['Load rising fast', WA], ['Stress up', null]] },
+    ].map(f => ({
+      name: f.name, icon: f.icon,
+      tap: () => this.go('athlete'),
+      iconStyle: `width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;background:${f.tone === HI ? 'rgba(255,90,78,.16)' : 'rgba(255,194,77,.16)'};color:${f.tone}`,
+      chips: f.chips.map(([label, tone]) => ({
+        label,
+        style: `font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px;` + (tone
+          ? `background:${tone === HI ? 'rgba(255,90,78,.14)' : 'rgba(255,194,77,.14)'};color:${tone === HI ? '#FF8A80' : '#FFD98A'}`
+          : `background:rgba(242,245,241,.09);color:rgba(242,245,241,.6)`),
+      })),
+    }));
+
+    const missingNames = ['Cara D.', 'Ellis W.', 'Nina F.', 'Sam T.'];
+
+    return {
+      nav,
+      jumps: jumpList.map(([label, key]) => ({
+        label, tap: () => this.go(key),
+        style: `padding:5px 10px;border-radius:8px;font:600 10.5px -apple-system,system-ui;cursor:pointer;` +
+          (scr === key ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.55)`),
+      })),
+
+      onWelcome: scr === 'welcome',
+      onQuiz: scr === 'quiz',
+      onPersonalizing: scr === 'personalizing',
+      onPreview: scr === 'preview',
+      onSignup: scr === 'signup',
+      onPaywall: scr === 'paywall',
+      onCreateTeam: scr === 'createteam',
+      onToday: scr === 'today' || scr === 'done',
+      onBody: scr === 'bodymap',
+      onHistory: scr === 'history',
+      onTeams: scr === 'teams',
+      onJoin: scr === 'join',
+      onConsent: scr === 'consent',
+      onTeamInfo: scr === 'teaminfo',
+      onTeamHome: scr === 'teamhome',
+      onAthlete: scr === 'athlete',
+      onRoster: scr === 'roster',
+      onCustom: scr === 'custom',
+      onResponses: scr === 'responses',
+      onLocked: scr === 'locked',
+      onInbox: scr === 'inbox',
+      onSettings: scr === 'settings',
+      notDone: scr === 'today',
+      isDone: scr === 'done',
+      coachPath, athletePath: !coachPath,
+
+      quizKicker: stepSpec.kicker,
+      quizHeadline: stepSpec.headline,
+      quizSub: stepSpec.sub,
+      quizCounter: `${Math.min(s.step, spec.length)}/${spec.length}`,
+      quizBarStyle: `height:100%;border-radius:2px;background:${L};width:${(Math.min(s.step, spec.length) / spec.length) * 100}%;transition:width .3s cubic-bezier(.2,.8,.2,1)`,
+      quizBack: () => s.step > 1 ? this.setState({ step: s.step - 1 }) : this.go('welcome'),
+      quizOpts: stepSpec.opts.map(([label, sub]) => {
+        const on = s[stepSpec.key] === label;
+        return {
+          label, sub,
+          tap: () => {
+            this.setState({ [stepSpec.key]: label });
+            setTimeout(() => {
+              if (s.step >= spec.length) this.go('personalizing');
+              else this.setState({ step: s.step + 1 });
+            }, 200);
+          },
+          style: `display:flex;align-items:center;gap:12px;padding:18px 16px;border-radius:18px;cursor:pointer;transition:all .16s;` +
+            (on ? `background:rgba(200,255,61,.12);border:1.5px solid ${L}` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.1)`),
+          labelStyle: `font-size:17px;font-weight:700;letter-spacing:-.3px;color:${on ? L : '#F2F5F1'}`,
+          subStyle: `font-size:12.5px;margin-top:${sub ? 3 : 0}px;color:${FAINT};height:${sub ? 'auto' : '0'}`,
+          check: `width:22px;height:22px;border-radius:50%;flex-shrink:0;${on ? `background:${L}` : 'border:1.5px solid rgba(242,245,241,.2)'}`,
+        };
+      }),
+      personalizingNote: coachPath ? 'Building your team view' : 'Preparing your first check-in',
+
+      previewHeadline: coachPath ? 'One list, every morning' : 'Your shape, week by week',
+      previewSub: coachPath
+        ? 'Instead of reading twelve replies, you get the two or three names that need you today — and why.'
+        : 'Every check-in sharpens your baseline, so a dip shows up as a dip instead of a bad mood.',
+
+      finishSignup: () => this.go(coachPath ? 'paywall' : 'today'),
+      paywallHeadline: {
+        "Spotting fatigue before it's a problem": 'Catch fatigue before it becomes a problem',
+        'Deciding who plays each session': 'Walk into every session knowing who\'s ready',
+        'Getting athletes to actually engage': 'Get your squad actually checking in',
+      }[s.challenge] || 'See who needs you, every morning',
+      paywallSub: s.challenge
+        ? `You said your biggest challenge is "${String(s.challenge).charAt(0).toLowerCase() + String(s.challenge).slice(1)}". That's exactly what the team view is built for.`
+        : 'The team view turns twelve check-ins into one clear list, sorted by who needs attention today.',
+      paywallBullets: [
+        { text: 'Flagged list every morning — who dipped, who reported pain, who\'s ramping load' },
+        { text: 'Up to two of your own questions on every check-in' },
+        { text: 'One-tap reminders for anyone who hasn\'t logged' },
+        { text: 'Per-question squad breakdowns — see fatigue or soreness drifting before anyone complains' },
+        { text: 'One subscription covers every team you coach' },
+        { text: 'Your athletes keep personal tracking free, forever' },
+      ],
+      startTrial: () => this.go('createteam'),
+      skipPaywall: () => this.go('today'),
+
+      teamName: s.teamName,
+      sportChips: ['Hockey', 'Football', 'Rugby', 'Netball', 'Running', 'Other'].map(label => {
+        const on = s.chip === label;
+        return {
+          label, tap: () => this.setState({ chip: label }),
+          style: `padding:11px 15px;border-radius:13px;font-size:14.5px;font-weight:700;cursor:pointer;` +
+            (on ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.06);border:1px solid rgba(242,245,241,.1);color:rgba(242,245,241,.7)`),
+        };
+      }),
+
+      todayTitle: scr === 'done' ? "You're done" : 'How are you feeling?',
+      blocks,
+      avails: [[1, 'REDUCED'], [2, 'AVAILABLE'], [3, 'FULLY']].map(([v, label]) => {
+        const on = s.avail === v;
+        return {
+          label, tap: () => this.setState({ avail: s.avail === v ? 0 : v }),
+          style: `flex:1;padding:18px 6px;border-radius:18px;text-align:center;font-size:12.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;transition:all .16s;` +
+            (on ? `background:rgba(200,255,61,.14);border:1.5px solid ${L};color:${L}` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.4)`),
+        };
+      }),
+      showCoach: this.props.showCoachQuestions ?? true,
+      coachOpts: [1, 2, 3, 4, 5].map(v => ({ v, tap: () => this.setState({ coach: s.coach === v ? 0 : v }), style: this.tile(s.coach === v, false) })),
+
+      showSubmit: scr === 'today',
+      submitLabel: answered ? 'SUBMIT CHECK-IN' : `${left} TO GO`,
+      submitStyle: `padding:19px;border-radius:20px;text-align:center;font-size:17px;font-weight:800;letter-spacing:-.1px;transition:all .18s;` +
+        (answered ? `background:${L};color:#0B0D0C;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.3)`
+          : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.35);cursor:default;backdrop-filter:blur(12px)`),
+      submit: () => answered && this.go(s.a[2] && s.a[2] <= 2 ? 'bodymap' : 'done'),
+      reset: () => this.setState({ screen: 'today', a: [0, 0, 0, 0, 0], avail: 0, coach: 0, marks: [], sev: {} }),
+      doneSummary: lowCount > 0
+        ? `${lowCount} area${lowCount === 1 ? '' : 's'} below your usual — an easy warm-up is the smart call.`
+        : 'Everything at or above your usual. Good day to push.',
+      basePts: [3.4, 3.6, 3.2, 3.5, 3.8].map(pt).map(p => p.join(',')).join(' '),
+      radarPts: pts.map(p => p.join(',')).join(' '),
+      radarDots: pts.map(p => ({ x: p[0], y: p[1] })),
+
+      legendOpen: s.legend != null,
+      legendShort: legendQ ? legendQ.short : '',
+      legendLong: legendQ ? legendQ.long : '',
+      legendRows: (legendQ ? legendQ.responses : []).map((label, j) => {
+        const on = s.legend != null && s.a[s.legend] === j + 1;
+        return {
+          n: j + 1, label,
+          tap: () => { this.setAnswer(s.legend, j + 1); setTimeout(() => this.setState({ legend: null }), 160); },
+          wrap: `display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:16px;cursor:pointer;` +
+            (on ? `background:rgba(200,255,61,.12);border:1.5px solid ${L}` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)`),
+          badge: `width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;` +
+            (on ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.5)`),
+          text: `flex:1;font-size:15.5px;line-height:20px;font-weight:${on ? 700 : 500};color:${on ? L : 'rgba(242,245,241,.85)'}`,
+          check: `font-size:13px;font-weight:800;color:${on ? L : 'transparent'}`,
+        };
+      }),
+      closeLegend: () => this.setState({ legend: null }),
+
+      bodyPlaceholder: s.face === 'front' ? 'front body outline — asset needed' : 'back body outline — asset needed',
+      frontTab: `padding:9px 18px;border-radius:9px;font-size:12.5px;font-weight:800;letter-spacing:.5px;cursor:pointer;${s.face === 'front' ? `background:${L};color:#0B0D0C` : 'color:rgba(242,245,241,.5)'}`,
+      backTab: `padding:9px 18px;border-radius:9px;font-size:12.5px;font-weight:800;letter-spacing:.5px;cursor:pointer;${s.face === 'back' ? `background:${L};color:#0B0D0C` : 'color:rgba(242,245,241,.5)'}`,
+      showFront: () => this.setState({ face: 'front' }),
+      showBack: () => this.setState({ face: 'back' }),
+      zones: [[46, 12], [30, 30], [62, 30], [38, 56], [58, 56], [42, 76], [56, 76]].map(([x, y], i) => {
+        const on = s.marks.includes(i);
+        return {
+          mark: on ? '●' : '',
+          tap: () => this.setState(st => ({
+            marks: st.marks.includes(i) ? st.marks.filter(m => m !== i) : [...st.marks, i],
+            sel: st.marks.includes(i) ? null : i,
+          })),
+          style: `position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#0B0D0C;transition:all .16s;` +
+            (on ? `background:${L};box-shadow:0 6px 18px rgba(200,255,61,.4)` : `background:rgba(242,245,241,.07);border:1.5px dashed rgba(242,245,241,.25)`),
+        };
+      }),
+      anyMarks: s.marks.length > 0,
+      marksTitle: s.sel != null ? `${['Neck', 'Left shoulder', 'Right shoulder', 'Left quad', 'Right quad', 'Left calf', 'Right calf'][s.sel]} — how bad?` : `${s.marks.length} spot${s.marks.length === 1 ? '' : 's'} marked`,
+      severities: ['MILD', 'MODERATE', 'SEVERE'].map(label => {
+        const on = s.sel != null && s.sev[s.sel] === label;
+        return {
+          label, tap: () => this.setState(st => ({ sev: { ...st.sev, [st.sel]: label } })),
+          style: `flex:1;text-align:center;padding:13px 4px;border-radius:14px;font-size:12.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;` +
+            (on ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);color:rgba(242,245,241,.55)`),
+        };
+      }),
+      finishBody: () => this.go('done'),
+
+      calendar: Array.from({ length: 31 }, (_, i) => {
+        const n = i + 1, seed = (n * 37) % 11, future = n > 26;
+        const bg = future ? 'transparent' : seed > 7 ? L : seed > 4 ? 'rgba(200,255,61,.45)' : seed > 2 ? WA : HI;
+        const fg = future ? 'rgba(242,245,241,.2)' : seed > 4 ? '#0B0D0C' : '#0B0D0C';
+        return { n, cell: `aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:${bg};color:${fg};${future ? 'border:1px dashed rgba(242,245,241,.12)' : ''}` };
+      }),
+
+      createTeamTap: () => this.go('paywall'),
+      visibilityRows: [
+        ['Your daily ratings', 'Coach only'], ['Pain you report', 'Coach only'],
+        ['Custom question answers', 'Coach only'], ['Your teammates', 'Nothing'],
+      ].map(([label, val]) => ({
+        label, val,
+        dot: `width:8px;height:8px;border-radius:50%;background:${val === 'Nothing' ? L : 'rgba(242,245,241,.3)'}`,
+        valStyle: `font-size:13px;font-weight:700;color:${val === 'Nothing' ? L : FAINT}`,
+      })),
+
+      codeCells: ['H', 'K', '2', 'S', '9', '4'].map((ch, i) => ({
+        ch,
+        style: `flex:1;aspect-ratio:.78;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;background:rgba(242,245,241,.05);border:1.5px solid ${s.codeError ? 'rgba(255,90,78,.5)' : i === 5 ? L : 'rgba(242,245,241,.12)'}`,
+      })),
+      codeError: s.codeError,
+      tryBadCode: () => this.setState({ codeError: !s.codeError }),
+
+      signals: SIGNALS.map((sig, i) => {
+        const open = s.openSignal === i;
+        const series = sig.series, last = series[series.length - 1], first = series[0];
+        const d = +(last - first).toFixed(1);
+        const good = sig.higherIsBetter ? d >= 0.2 : d <= -0.2;
+        const bad = sig.higherIsBetter ? d <= -0.2 : d >= 0.2;
+        const tone = bad ? (Math.abs(d) >= 0.7 ? HI : WA) : good ? L : 'rgba(242,245,241,.45)';
+        const y = v => +(32 - ((v - 2.2) / 2.2) * 30).toFixed(1);
+        return {
+          short: sig.short, tone, open,
+          tap: () => this.setState({ openSignal: open ? null : i }),
+          wrap: `padding:15px;cursor:pointer;border-bottom:1px solid rgba(242,245,241,.06);transition:background .16s;${open ? 'background:rgba(242,245,241,.04)' : ''}`,
+          spark: series.map((v, j) => `${j === 0 ? 'M' : 'L'}${(j * (196 / (series.length - 1))).toFixed(1)},${y(v)}`).join(' '),
+          lastY: y(last),
+          avg: last.toFixed(1),
+          avgStyle: `font-size:19px;font-weight:800;letter-spacing:-.6px;color:${tone}`,
+          delta: `${d > 0 ? '↑' : d < 0 ? '↓' : '→'} ${Math.abs(d).toFixed(1)} · 14d`,
+          deltaStyle: `font-size:10.5px;font-weight:700;margin-top:3px;color:${tone}`,
+          dist: sig.dist.map((n, j) => ({
+            n: n || '',
+            label: j + 1,
+            style: `flex:${Math.max(n, 0.35)};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:${j < 2 ? '#0B0D0C' : j === 2 ? '#0B0D0C' : '#0B0D0C'};background:${j === 0 ? HI : j === 1 ? 'rgba(255,90,78,.6)' : j === 2 ? WA : j === 3 ? 'rgba(200,255,61,.6)' : L};opacity:${n ? 1 : .18}`,
+            capStyle: `flex:${Math.max(n, 0.35)};text-align:center;font-size:9.5px;font-weight:800;color:rgba(242,245,241,.3)`,
+          })),
+          note: sig.note,
+          hasAction: !!sig.action,
+          action: sig.action,
+          actionLabel: bad ? 'WORTH TRYING' : 'KEEP DOING',
+          actionLabelStyle: `font-size:10.5px;font-weight:800;letter-spacing:1px;color:${bad ? WA : L}`,
+          actionWrap: `display:flex;gap:11px;margin-top:12px;padding:13px 14px;border-radius:16px;background:${bad ? 'rgba(255,194,77,.08)' : 'rgba(200,255,61,.07)'};border:1px solid ${bad ? 'rgba(255,194,77,.26)' : 'rgba(200,255,61,.22)'}`,
+          actionIcon: `width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:${bad ? 'rgba(255,194,77,.18)' : 'rgba(200,255,61,.18)'};color:${bad ? WA : L}`,
+          lowest: sig.lowest,
+        };
+      }),
+      flagged,
+      missingOpen: s.missingOpen,
+      toggleMissing: () => this.setState({ missingOpen: !s.missingOpen }),
+      missingLabel: s.missingOpen ? 'Tap a name to nudge them' : '4 still to log — tap to see who',
+      chevStyle: `color:rgba(242,245,241,.3);font-size:18px;transition:transform .2s;transform:rotate(${s.missingOpen ? 90 : 0}deg)`,
+      completion: Array.from({ length: 12 }, (_, i) => ({
+        style: `flex:1;height:6px;border-radius:3px;background:${i < 8 ? L : 'rgba(242,245,241,.12)'}`,
+      })),
+      missing: missingNames.map(name => {
+        const done = !!s.reminded[name];
+        return {
+          name, initials: name.split(' ').map(w => w[0]).join(''),
+          remind: () => this.setState(st => ({ reminded: { ...st.reminded, [name]: true } })),
+          btn: done ? 'SENT' : 'REMIND',
+          btnStyle: `padding:8px 13px;border-radius:11px;font-size:11.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;` +
+            (done ? `background:rgba(200,255,61,.14);color:${L}` : `background:rgba(242,245,241,.1);color:rgba(242,245,241,.8)`),
+        };
+      }),
+
+      rpeBars: [6, 7, 4, 8, 5, 9, 3, 8, 6, 9].map(v => ({
+        style: `flex:1;height:${v * 9}%;border-radius:4px;background:${v >= 8 ? WA : 'rgba(200,255,61,.55)'}`,
+      })),
+
+      roster: [
+        ['Mel Okonjo', 'Admin · you'], ['Priya N.', 'Member'], ['Tom B.', 'Member'],
+        ['Cara D.', 'Admin'], ['Ellis W.', 'Member'],
+      ].map(([name, role]) => ({
+        name, role, initials: name.split(' ').map(w => w[0]).join(''),
+        roleStyle: `font-size:12.5px;font-weight:700;margin-top:1px;color:${role.indexOf('Admin') === 0 ? L : FAINT}`,
+      })),
+
+      qTypes: ['Scale 1–5', 'Yes / no', 'Short text'].map(label => {
+        const on = s.qType === label;
+        return {
+          label, tap: () => this.setState({ qType: label }),
+          style: `flex:1;text-align:center;padding:12px 4px;border-radius:13px;font-size:13px;font-weight:700;cursor:pointer;` +
+            (on ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.06);border:1px solid rgba(242,245,241,.1);color:rgba(242,245,241,.6)`),
+        };
+      }),
+      toggleRequired: () => this.setState({ required: !s.required }),
+      reqTrack: `width:51px;height:31px;border-radius:16px;padding:2px;box-sizing:border-box;display:flex;cursor:pointer;transition:background .18s;background:${s.required ? L : 'rgba(242,245,241,.16)'};justify-content:${s.required ? 'flex-end' : 'flex-start'}`,
+      reqLabel: s.required ? 'REQUIRED' : 'OPTIONAL',
+      previewRowStyle: s.qType === 'Scale 1–5'
+        ? 'display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px'
+        : 'display:flex;gap:8px;margin-top:12px',
+      previewOpts: s.qType === 'Scale 1–5'
+        ? [1, 2, 3, 4, 5].map(v => ({ v, style: this.tile(false, false) }))
+        : s.qType === 'Yes / no'
+          ? ['Yes', 'No'].map(v => ({ v, style: 'flex:1;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.45)' }))
+          : [{ v: 'Type an answer…', style: 'flex:1;height:58px;border-radius:16px;display:flex;align-items:center;padding:0 14px;font-size:15px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.35)' }],
+
+      respCols: QUESTIONS.map(q => ({ label: q.short.slice(0, 3) })),
+      responses: [
+        ['Priya N.', [1, 2, 1, 2, 2]], ['Tom B.', [3, 2, 3, 3, 3]], ['Jonah A.', [2, 3, 3, 2, 3]],
+        ['Mel O.', [4, 4, 4, 4, 5]], ['Ade K.', [4, 5, 4, 3, 4]], ['Liv S.', [5, 4, 5, 4, 4]],
+        ['Ren T.', [3, 4, 3, 4, 4]], ['Kai M.', [4, 3, 4, 5, 4]],
+      ].map(([name, cells]) => ({
+        name,
+        cells: cells.map(v => ({
+          v,
+          style: `flex:1;text-align:center;font-size:14px;font-weight:800;padding:6px 0;border-radius:8px;` +
+            (v <= 2 ? `background:rgba(255,90,78,.14);color:#FF8A80` : v === 3 ? `background:rgba(255,194,77,.12);color:#FFD98A` : `background:rgba(200,255,61,.1);color:${L}`),
+        })),
+      })),
+
+      notifications: [
+        ['Priya N. may need a check-in today — reported hamstring soreness.', '07:14', true],
+        ['Your free trial for Uni Hockey 2s ends in 2 days.', 'Yesterday', true],
+        ['Quick one — how are you feeling today?', 'Yesterday 18:30', false],
+        ['Reminder: don\'t forget today\'s check-in for Riverside FC.', 'Mon', false],
+      ].map(([text, time, unread]) => ({
+        text, time,
+        wrap: `display:flex;gap:12px;padding:16px;border-radius:20px;background:rgba(242,245,241,.05);border:1px solid ${unread ? 'rgba(200,255,61,.22)' : 'rgba(242,245,241,.09)'}`,
+        dot: `width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;background:${unread ? L : 'rgba(242,245,241,.2)'}`,
+      })),
+
+      showTabs: ['today', 'done', 'bodymap', 'history', 'teams', 'teaminfo', 'join', 'teamhome', 'athlete', 'roster', 'custom', 'responses', 'inbox', 'settings'].indexOf(scr) > -1,
+      tabs: [['today', 'TODAY'], ['history', 'HISTORY'], ['teams', 'TEAMS'], ['settings', 'SETTINGS']].map(([id, label]) => {
+        const on = s.tab === id;
+        return {
+          label, tap: () => this.go(id === 'today' ? (s.a.every(v => v > 0) && s.avail ? 'done' : 'today') : id),
+          glyph: `width:22px;height:22px;border-radius:${id === 'today' ? '7px' : id === 'history' ? '4px' : id === 'teams' ? '11px' : '6px'};background:${on ? L : 'rgba(242,245,241,.28)'};transition:background .16s`,
+          cap: `font-size:10px;font-weight:800;letter-spacing:.4px;color:${on ? L : 'rgba(242,245,241,.4)'}`,
+        };
+      }),
+      tabBarStyle: `position:absolute;left:12px;right:12px;bottom:14px;z-index:35;height:64px;display:flex;align-items:center;padding:0 6px;${glassBox(28)}`,
+      showFab: scr === 'done' || scr === 'history',
+      fabStyle: `position:relative;padding:0 18px;height:48px;display:flex;align-items:center;${glassBox(24)}`,
+      sheetStyle: `position:absolute;left:0;right:0;bottom:0;z-index:45;padding:14px 18px 34px;animation:sheet .3s cubic-bezier(.2,.8,.2,1) both;border-radius:34px 34px 0 0;${g ? 'backdrop-filter:blur(34px) saturate(180%);-webkit-backdrop-filter:blur(34px) saturate(180%);background:rgba(28,32,26,.72);border-top:.5px solid rgba(242,245,241,.2)' : 'background:#171B16;border-top:1px solid rgba(242,245,241,.14)'};box-shadow:0 -14px 44px rgba(0,0,0,.6)`,
+
+      toggleGlass: () => this.setState({ glass: !g }),
+      glassLabel: g ? 'GLASS ON' : 'REDUCED',
+      toggleTrack: `width:51px;height:31px;border-radius:16px;padding:2px;box-sizing:border-box;display:flex;transition:background .18s;background:${!g ? L : 'rgba(242,245,241,.16)'};justify-content:${!g ? 'flex-end' : 'flex-start'}`,
+
+      rpeOpen: s.rpeOpen,
+      openRpe: () => this.setState({ rpeOpen: true }),
+      closeRpe: () => this.setState({ rpeOpen: false }),
+      rpeOpts: Array.from({ length: 10 }, (_, i) => {
+        const v = i + 1, on = s.rpe === v;
+        return { v, tap: () => this.setState({ rpe: v }), style: this.tile(on, false) };
+      }),
+      rpeSaveLabel: s.rpe ? 'SAVE SESSION' : 'PICK A NUMBER',
+      rpeSaveStyle: `margin-top:14px;padding:18px;border-radius:20px;text-align:center;font-size:17px;font-weight:800;` +
+        (s.rpe ? `background:${L};color:#0B0D0C;cursor:pointer;box-shadow:0 10px 28px rgba(200,255,61,.3)` : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.35)`),
+      saveRpe: () => s.rpe && this.setState({ rpeOpen: false, rpe: 0 }),
+    };
+  }
+}
+</script>
+</body>
+</html>

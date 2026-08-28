@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><style>
+body{margin:0;background:#151816;font-family:-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C8FF3D;text-decoration:none}a:hover{color:#DFFF8A}
+.dv-turn{padding:44px 48px 40px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#C8FF3D;color:#0B0D0C;border-radius:4px}
+.dv-tname{font:600 13px/1.2 -apple-system,system-ui;color:#F2F5F1}
+.dv-note{margin:0 0 24px;max-width:900px;font:12.5px/1.7 -apple-system,system-ui;color:rgba(242,245,241,.55)}
+.dv-note b{color:rgba(242,245,241,.85)}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui;color:rgba(242,245,241,.45);margin-bottom:10px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(242,245,241,.12);color:#F2F5F1;border-radius:5px}
+.dv-next{margin:26px 0 0;font:12px/1.6 -apple-system,system-ui;color:rgba(242,245,241,.42)}
+.pane::-webkit-scrollbar{width:0}
+@keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+</style></helmet>
+
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><span class="dv-tid">5</span><span class="dv-tname">iPad — dark, landscape, three-pane coach view</span></div>
+<p class="dv-note">The tablet isn't a stretched phone: it's the coach's tool, so the layout is built around <b>seeing the squad and one athlete at the same time</b>. Left is a glass icon rail, middle is the persistent squad list (flagged first, then everyone), right is the detail pane. Selecting a name never loses your place in the list — the whole point of the split. <b>Squad signals</b> gets the space it deserves here: all five questions as full charts in a 2-up grid rather than sparkline rows, each with its distribution and the "worth trying" prompt inline. The athlete check-in exists too (<b>Today</b> in the rail) but stays a centred single column at phone measure — a 1,100px-wide row of five tap targets would be worse, not better. Glass stays restrained: rail, sheet and FAB only. <b>REDUCED</b> in the top bar swaps every glass surface for its solid fallback.</p>
+<div class="dv-olabel"><span class="dv-oid">5a</span>iPad Pro 11" · landscape · 1194 × 834</div>
+
+<div style="width:1194px;height:834px;border-radius:38px;padding:14px;background:#1B1E1A;box-shadow:0 40px 90px rgba(0,0,0,.55),inset 0 0 0 1.5px rgba(242,245,241,.09);box-sizing:border-box">
+<div style="position:relative;width:100%;height:100%;border-radius:26px;overflow:hidden;background:#0B0D0C;color:#F2F5F1;display:flex">
+  <div style="position:absolute;top:-180px;left:120px;width:520px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(200,255,61,.16),transparent 70%);filter:blur(30px);pointer-events:none"></div>
+
+  <div style="{{ railStyle }}">
+    <div style="width:38px;height:38px;border-radius:12px;background:#C8FF3D;color:#0B0D0C;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0">UH</div>
+    <div style="width:26px;height:1px;background:rgba(242,245,241,.14)"></div>
+    <sc-for list="{{ railItems }}" as="r" hint-placeholder-count="5">
+      <div onClick="{{ r.tap }}" style="{{ r.wrap }}">
+        <div style="{{ r.glyph }}"></div>
+        <div style="{{ r.cap }}">{{ r.label }}</div>
+      </div>
+    </sc-for>
+    <div style="flex:1"></div>
+    <div onClick="{{ toggleGlass }}" style="{{ railGlassBtn }}">{{ glassLabel }}</div>
+  </div>
+
+  <sc-if value="{{ coachView }}" hint-placeholder-val="{{ true }}">
+  <div style="width:352px;flex-shrink:0;border-right:1px solid rgba(242,245,241,.08);display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:26px 22px 16px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:#C8FF3D">WED 26 AUG · 8 OF 12 IN</div>
+      <div style="font-size:27px;font-weight:800;letter-spacing:-1.1px;line-height:31px;margin-top:7px">Uni Hockey 2s</div>
+      <div style="display:flex;gap:4px;margin-top:14px">
+        <sc-for list="{{ completion }}" as="c" hint-placeholder-count="12">
+          <div style="{{ c.style }}"></div>
+        </sc-for>
+      </div>
+    </div>
+    <div class="pane" style="flex:1;overflow:auto;padding:0 14px 20px">
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);padding:6px 8px 8px">WORTH A WORD · 3</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <sc-for list="{{ flagged }}" as="f" hint-placeholder-count="3">
+          <div onClick="{{ f.tap }}" style="{{ f.wrap }}">
+            <div style="{{ f.iconStyle }}">{{ f.icon }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15.5px;font-weight:700;letter-spacing:-.2px">{{ f.name }}</div>
+              <div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
+                <sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="2">
+                  <span style="{{ c.style }}">{{ c.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4);padding:20px 8px 8px">EVERYONE ELSE</div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <sc-for list="{{ others }}" as="o" hint-placeholder-count="9">
+          <div onClick="{{ o.tap }}" style="{{ o.wrap }}">
+            <div style="{{ o.avatar }}">{{ o.initials }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:600">{{ o.name }}</div>
+              <div style="{{ o.subStyle }}">{{ o.sub }}</div>
+            </div>
+            <div style="{{ o.scoreStyle }}">{{ o.score }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <div class="pane" style="flex:1;min-width:0;overflow:auto;position:relative">
+
+  <sc-if value="{{ onSignals }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:26px 28px 116px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:rgba(242,245,241,.4)">SQUAD SIGNALS · BY QUESTION</div>
+        <div style="font-size:30px;font-weight:800;letter-spacing:-1.3px;line-height:34px;margin-top:6px">What the squad is telling you</div>
+      </div>
+      <div style="display:flex;gap:5px;padding:3px;background:rgba(242,245,241,.07);border-radius:13px;flex-shrink:0">
+        <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="3">
+          <div onClick="{{ r.tap }}" style="{{ r.style }}">{{ r.label }}</div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <sc-for list="{{ headline }}" as="h" hint-placeholder-count="3">
+        <div style="{{ h.wrap }}">
+          <div style="font-size:10.5px;font-weight:800;letter-spacing:1.1px;color:rgba(242,245,241,.4)">{{ h.label }}</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-top:8px">
+            <div style="{{ h.valStyle }}">{{ h.val }}</div>
+            <div style="{{ h.deltaStyle }}">{{ h.delta }}</div>
+          </div>
+          <div style="font-size:12.5px;line-height:17px;color:rgba(242,245,241,.5);margin-top:6px">{{ h.note }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <sc-for list="{{ signals }}" as="g" hint-placeholder-count="5">
+        <div style="{{ g.card }}">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+            <div>
+              <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.75)">{{ g.short }}</div>
+              <div style="font-size:12.5px;color:rgba(242,245,241,.42);margin-top:3px">{{ g.question }}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="{{ g.avgStyle }}">{{ g.avg }}</div>
+              <div style="{{ g.deltaStyle }}">{{ g.delta }}</div>
+            </div>
+          </div>
+          <svg width="100%" height="104" viewBox="0 0 300 104" preserveAspectRatio="none" style="display:block;margin-top:14px;overflow:visible">
+            <line x1="0" y1="34" x2="300" y2="34" stroke="rgba(242,245,241,.08)" stroke-width="1"></line>
+            <line x1="0" y1="{{ g.baseY }}" x2="300" y2="{{ g.baseY }}" stroke="rgba(242,245,241,.3)" stroke-width="1" stroke-dasharray="3 4"></line>
+            <path d="{{ g.band }}" fill="{{ g.fill }}"></path>
+            <path d="{{ g.line }}" fill="none" stroke="{{ g.tone }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="300" cy="{{ g.lastY }}" r="4" fill="{{ g.tone }}"></circle>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;font-weight:800;letter-spacing:.5px;color:rgba(242,245,241,.28);margin-top:2px">
+            <span>{{ g.axisFrom }}</span><span>SPREAD OF SQUAD</span><span>TODAY</span>
+          </div>
+          <div style="display:flex;gap:3px;margin-top:14px;height:30px">
+            <sc-for list="{{ g.dist }}" as="d" hint-placeholder-count="5">
+              <div style="{{ d.style }}">{{ d.n }}</div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:3px;margin-top:5px">
+            <sc-for list="{{ g.dist }}" as="d" hint-placeholder-count="5">
+              <div style="{{ d.capStyle }}">{{ d.label }}</div>
+            </sc-for>
+          </div>
+          <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.68);margin-top:14px">{{ g.note }}</div>
+          <sc-if value="{{ g.hasAction }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ g.actionWrap }}">
+            <div style="{{ g.actionIcon }}">→</div>
+            <div style="flex:1">
+              <div style="{{ g.actionLabelStyle }}">{{ g.actionLabel }}</div>
+              <div style="font-size:13px;line-height:18px;color:rgba(242,245,241,.7);margin-top:2px">{{ g.action }}</div>
+            </div>
+          </div>
+          </sc-if>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:12px;flex-wrap:wrap">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.6px;color:rgba(242,245,241,.35)">LOWEST</div>
+            <sc-for list="{{ g.lowest }}" as="n" hint-placeholder-count="3">
+              <div onClick="{{ n.tap }}" style="{{ n.style }}">{{ n.name }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);display:flex;flex-direction:column">
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.75)">HOW THEY MOVE TOGETHER</div>
+        <div style="font-size:12.5px;color:rgba(242,245,241,.42);margin-top:3px">All five, normalised to their own baselines</div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0">
+          <svg width="270" height="234" viewBox="0 0 200 176" style="overflow:visible">
+            <polygon points="100,16 178,61 148,148 52,148 22,61" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,46 152,76 132,134 68,134 48,76" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,76 126,91 116,120 84,120 74,91" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,40 156,72 134,138 66,138 44,72" fill="none" stroke="rgba(242,245,241,.32)" stroke-width="1.5" stroke-dasharray="3 4"></polygon>
+            <polygon points="100,68 132,88 122,132 70,126 56,80" fill="rgba(200,255,61,.1)" stroke="#C8FF3D" stroke-width="2.5" stroke-linejoin="round"></polygon>
+            <circle cx="100" cy="68" r="4" fill="#C8FF3D"></circle><circle cx="132" cy="88" r="4" fill="#C8FF3D"></circle><circle cx="122" cy="132" r="4" fill="#C8FF3D"></circle><circle cx="70" cy="126" r="4" fill="#C8FF3D"></circle><circle cx="56" cy="80" r="4" fill="#C8FF3D"></circle>
+            <text x="100" y="6" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">FATIGUE</text>
+            <text x="192" y="58" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">SLEEP</text>
+            <text x="158" y="166" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">MUSCLES</text>
+            <text x="44" y="166" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">STRESS</text>
+            <text x="8" y="58" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">MOOD</text>
+          </svg>
+        </div>
+        <div style="display:flex;gap:16px;font-size:11px;font-weight:700;color:rgba(242,245,241,.45);padding-top:4px">
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:2.5px;background:#C8FF3D;border-radius:2px"></div>TODAY</div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:0;border-top:2px dashed rgba(242,245,241,.4)"></div>14-DAY BASELINE</div>
+        </div>
+        <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.68);margin-top:14px;padding-top:14px;border-top:1px solid rgba(242,245,241,.08)">Soreness and fatigue are pulling in while stress and mood hold out. That shape is a training-load story, not a life-stress one.</div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onAthlete }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:26px 28px 116px;animation:rise .26s cubic-bezier(.2,.8,.2,1) both">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+      <div style="display:flex;align-items:center;gap:15px">
+        <div style="{{ athlete.avatar }}">{{ athlete.initials }}</div>
+        <div>
+          <div style="font-size:30px;font-weight:800;letter-spacing:-1.2px;line-height:34px">{{ athlete.name }}</div>
+          <div style="font-size:13.5px;color:rgba(242,245,241,.45);margin-top:3px">{{ athlete.meta }}</div>
+        </div>
+      </div>
+      <div onClick="{{ backToSignals }}" style="padding:11px 16px;border-radius:14px;background:rgba(242,245,241,.07);border:1px solid rgba(242,245,241,.12);font-size:13px;font-weight:700;color:rgba(242,245,241,.75);cursor:pointer;flex-shrink:0;white-space:nowrap">Squad signals ›</div>
+    </div>
+
+    <sc-if value="{{ athlete.flagged }}" hint-placeholder-val="{{ true }}">
+    <div style="{{ athlete.alertWrap }}">
+      <div style="{{ athlete.alertIcon }}">{{ athlete.alertGlyph }}</div>
+      <div style="flex:1;font-size:14.5px;line-height:21px;color:{{ athlete.alertColor }}">{{ athlete.alert }}</div>
+    </div>
+    </sc-if>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+      <div style="min-width:0;border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">TODAY VS THEIR BASELINE</div>
+        <div style="display:flex;justify-content:center;padding:6px 0">
+          <svg width="250" height="216" viewBox="0 0 200 176" style="overflow:visible">
+            <polygon points="100,16 178,61 148,148 52,148 22,61" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,46 152,76 132,134 68,134 48,76" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,76 126,91 116,120 84,120 74,91" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="{{ athlete.basePts }}" fill="none" stroke="rgba(242,245,241,.32)" stroke-width="1.5" stroke-dasharray="3 4"></polygon>
+            <polygon points="{{ athlete.pts }}" fill="none" stroke="{{ athlete.tone }}" stroke-width="2.5" stroke-linejoin="round"></polygon>
+            <sc-for list="{{ athlete.dots }}" as="d" hint-placeholder-count="5">
+              <circle cx="{{ d.x }}" cy="{{ d.y }}" r="4" fill="{{ athlete.tone }}"></circle>
+            </sc-for>
+            <text x="100" y="6" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">FATIGUE</text>
+            <text x="192" y="58" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">SLEEP</text>
+            <text x="158" y="166" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">MUSCLES</text>
+            <text x="44" y="166" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">STRESS</text>
+            <text x="8" y="58" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">MOOD</text>
+          </svg>
+        </div>
+      </div>
+
+      <div style="min-width:0;display:flex;flex-direction:column;gap:12px">
+        <div style="min-width:0;border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+          <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">TODAY'S ANSWERS</div>
+          <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">
+            <sc-for list="{{ athlete.answers }}" as="r" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:62px;flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.9px;color:rgba(242,245,241,.5)">{{ r.short }}</div>
+                <div style="{{ r.badge }}">{{ r.v }}</div>
+                <div style="flex:1;min-width:0;font-size:13.5px;color:rgba(242,245,241,.72);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);flex:1;min-width:0">
+          <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">SESSION LOAD · RPE</div>
+          <div style="display:flex;align-items:flex-end;gap:6px;height:74px;margin-top:16px">
+            <sc-for list="{{ athlete.rpeBars }}" as="b" hint-placeholder-count="10">
+              <div style="{{ b.style }}"></div>
+            </sc-for>
+          </div>
+          <div style="font-size:13px;line-height:18px;color:rgba(242,245,241,.5);margin-top:12px">{{ athlete.rpeNote }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div style="min-width:0;border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">14-DAY TREND</div>
+        <svg width="100%" height="96" viewBox="0 0 300 96" preserveAspectRatio="none" style="display:block;margin-top:14px">
+          <line x1="0" y1="48" x2="300" y2="48" stroke="rgba(242,245,241,.3)" stroke-width="1" stroke-dasharray="3 4"></line>
+          <path d="{{ athlete.trend }}" fill="none" stroke="{{ athlete.tone }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <div style="display:flex;gap:16px;font-size:11px;font-weight:700;color:rgba(242,245,241,.45);margin-top:6px">
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:2.5px;border-radius:2px;background:{{ athlete.tone }}"></div>WELLNESS SCORE</div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:0;border-top:2px dashed rgba(242,245,241,.4)"></div>THEIR BASELINE</div>
+        </div>
+      </div>
+      <div style="min-width:0;border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">{{ athlete.painTitle }}</div>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:14px">
+          <sc-for list="{{ athlete.pain }}" as="p" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="{{ p.badge }}">{{ p.sev }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14.5px;font-weight:600">{{ p.zone }}</div>
+                <div style="font-size:12.5px;color:rgba(242,245,241,.45);margin-top:1px">{{ p.when }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ athlete.noPain }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px;line-height:20px;color:rgba(242,245,241,.5);margin-top:12px">Nothing reported in the last fortnight.</div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onRoster }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:26px 28px 116px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:rgba(242,245,241,.4)">ROSTER · 12 MEMBERS</div>
+    <div style="font-size:30px;font-weight:800;letter-spacing:-1.3px;line-height:34px;margin-top:6px">Who's in the squad</div>
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <div style="flex:1;border-radius:24px;padding:22px;background:rgba(200,255,61,.07);border:1px solid rgba(200,255,61,.26)">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.5)">JOIN CODE</div>
+        <div style="font-size:44px;font-weight:800;letter-spacing:8px;color:#C8FF3D;margin-top:8px">HK2S94</div>
+        <div style="display:flex;gap:9px;margin-top:16px">
+          <div style="flex:1;padding:14px;border-radius:16px;background:#C8FF3D;color:#0B0D0C;text-align:center;font-size:14.5px;font-weight:800;cursor:pointer">SHARE INVITE</div>
+          <div style="padding:14px 18px;border-radius:16px;border:1px solid rgba(242,245,241,.16);text-align:center;font-size:14.5px;font-weight:700;color:rgba(242,245,241,.8);cursor:pointer">New code</div>
+        </div>
+      </div>
+      <div style="width:300px;flex-shrink:0;border-radius:24px;padding:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">YOUR SUBSCRIPTION</div>
+        <div style="font-size:19px;font-weight:700;letter-spacing:-.4px;margin-top:8px">Unlimited teams</div>
+        <div style="font-size:13.5px;line-height:19px;color:rgba(242,245,241,.5);margin-top:5px">One £8/month covers every team you coach — this is team 2 of 2.</div>
+        <div style="margin-top:14px;padding:13px;border-radius:14px;background:rgba(242,245,241,.07);text-align:center;font-size:14px;font-weight:700;color:rgba(242,245,241,.8);cursor:pointer">+ Create another team</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;border-radius:24px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09);overflow:hidden">
+      <div style="display:flex;gap:14px;padding:13px 20px;border-bottom:1px solid rgba(242,245,241,.08)">
+        <div style="flex:1;font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.35)">MEMBER</div>
+        <div style="width:110px;font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.35)">ROLE</div>
+        <div style="width:130px;font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.35)">LAST CHECK-IN</div>
+        <div style="width:90px;text-align:right;font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.35)">14-DAY AVG</div>
+      </div>
+      <sc-for list="{{ roster }}" as="m" hint-placeholder-count="12">
+        <div onClick="{{ m.tap }}" style="{{ m.wrap }}">
+          <div style="flex:1;display:flex;align-items:center;gap:12px;min-width:0">
+            <div style="{{ m.avatar }}">{{ m.initials }}</div>
+            <div style="font-size:15.5px;font-weight:600">{{ m.name }}</div>
+          </div>
+          <div style="{{ m.roleStyle }}">{{ m.role }}</div>
+          <div style="width:130px;font-size:13.5px;color:rgba(242,245,241,.5)">{{ m.last }}</div>
+          <div style="{{ m.avgStyle }}">{{ m.avg }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onQuestions }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:26px 28px 116px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:rgba(242,245,241,.4)">CUSTOM QUESTIONS · 1 OF 2 USED</div>
+    <div style="font-size:30px;font-weight:800;letter-spacing:-1.3px;line-height:34px;margin-top:6px">Your own questions</div>
+    <div style="font-size:14.5px;line-height:21px;color:rgba(242,245,241,.5);margin-top:8px;max-width:520px">Up to two. They appear at the end of every athlete's check-in, under their own divider, so the five core questions stay comparable across teams.</div>
+    <div style="display:flex;gap:12px;margin-top:22px;align-items:flex-start">
+      <div style="flex:1;border-radius:24px;padding:22px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.4)">QUESTION 1</div>
+        <div style="font-size:19px;font-weight:600;margin-top:8px">Hydration since last session</div>
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:rgba(242,245,241,.4);margin-top:20px">ANSWER TYPE</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <sc-for list="{{ qTypes }}" as="t" hint-placeholder-count="3">
+            <div onClick="{{ t.tap }}" style="{{ t.style }}">{{ t.label }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;margin-top:20px;padding-top:18px;border-top:1px solid rgba(242,245,241,.08)">
+          <div style="flex:1">
+            <div style="font-size:15.5px">Required</div>
+            <div style="font-size:12.5px;color:rgba(242,245,241,.45);margin-top:2px">Athletes can't submit without answering</div>
+          </div>
+          <div onClick="{{ toggleRequired }}" style="{{ reqTrack }}"><div style="width:27px;height:27px;border-radius:14px;background:#fff"></div></div>
+        </div>
+        <div style="margin-top:18px;padding:16px;border-radius:18px;border:1px dashed rgba(242,245,241,.2);text-align:center;font-size:15px;font-weight:700;color:rgba(242,245,241,.6);cursor:pointer">+ Add question 2</div>
+      </div>
+      <div style="width:360px;flex-shrink:0">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:1.1px;color:#C8FF3D;margin-bottom:10px">LIVE PREVIEW · WHAT ATHLETES SEE</div>
+        <div style="border-radius:24px;padding:20px;background:rgba(200,255,61,.06);border:1px solid rgba(200,255,61,.22)">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="height:1px;flex:1;background:rgba(200,255,61,.25)"></div>
+            <div style="font-size:10px;font-weight:800;letter-spacing:1.1px;color:#C8FF3D">FROM YOUR COACH</div>
+            <div style="height:1px;flex:1;background:rgba(200,255,61,.25)"></div>
+          </div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:16px">
+            <div style="font-size:16.5px;font-weight:700">Hydration since last session</div>
+            <div style="font-size:10.5px;font-weight:800;color:rgba(242,245,241,.4);flex-shrink:0">{{ reqLabel }}</div>
+          </div>
+          <div style="{{ previewRowStyle }}">
+            <sc-for list="{{ previewOpts }}" as="o" hint-placeholder-count="5">
+              <div style="{{ o.style }}">{{ o.v }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onToday }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:430px;margin:0 auto;padding:34px 24px 120px">
+    <div style="font-size:11.5px;font-weight:800;letter-spacing:1.4px;color:#C8FF3D">WED 26 AUG · DAY 41</div>
+    <div style="font-size:36px;font-weight:800;letter-spacing:-1.6px;line-height:39px;margin-top:8px">{{ todayTitle }}</div>
+    <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+    <div style="font-size:15px;line-height:21px;color:rgba(242,245,241,.5);margin-top:10px">Your own check-in — the same five questions your squad answers. Tap ⓘ for the wording.</div>
+    <div style="display:flex;flex-direction:column;gap:22px;margin-top:26px">
+      <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="5">
+        <div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">{{ b.short }}</div>
+            <div onClick="{{ b.info }}" style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(242,245,241,.28);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-style:italic;color:rgba(242,245,241,.55);cursor:pointer;flex-shrink:0" style-hover="border-color:#C8FF3D;color:#C8FF3D">i</div>
+            <div style="flex:1"></div>
+            <div style="{{ b.answerStyle }}">{{ b.answer }}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px">
+            <sc-for list="{{ b.opts }}" as="o" hint-placeholder-count="5">
+              <div onClick="{{ o.tap }}" style="{{ o.style }}">{{ o.v }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+      <div>
+        <div style="font-size:13px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.45)">AVAILABILITY</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <sc-for list="{{ avails }}" as="a" hint-placeholder-count="3">
+            <div onClick="{{ a.tap }}" style="{{ a.style }}">{{ a.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div onClick="{{ submit }}" style="{{ submitStyle }}">{{ submitLabel }}</div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:rise .34s cubic-bezier(.2,.8,.2,1) both">
+      <div style="margin-top:14px;display:inline-flex;padding:6px 11px;border-radius:999px;background:rgba(200,255,61,.14);font-size:11.5px;font-weight:800;letter-spacing:.5px;color:#C8FF3D">SAVED · SYNCING</div>
+      <div style="margin-top:18px;border-radius:26px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)">
+        <div style="font-size:11.5px;font-weight:800;letter-spacing:1.2px;color:rgba(242,245,241,.4)">TODAY VS YOUR BASELINE</div>
+        <div style="display:flex;justify-content:center">
+          <svg width="270" height="234" viewBox="0 0 200 176" style="overflow:visible">
+            <polygon points="100,16 178,61 148,148 52,148 22,61" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,46 152,76 132,134 68,134 48,76" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="100,76 126,91 116,120 84,120 74,91" fill="none" stroke="rgba(242,245,241,.08)" stroke-width="1"></polygon>
+            <polygon points="{{ myPts }}" fill="none" stroke="#C8FF3D" stroke-width="2.5" stroke-linejoin="round"></polygon>
+            <sc-for list="{{ myDots }}" as="d" hint-placeholder-count="5">
+              <circle cx="{{ d.x }}" cy="{{ d.y }}" r="4" fill="#C8FF3D"></circle>
+            </sc-for>
+            <text x="100" y="6" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">FATIGUE</text>
+            <text x="192" y="58" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">SLEEP</text>
+            <text x="158" y="166" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">MUSCLES</text>
+            <text x="44" y="166" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">STRESS</text>
+            <text x="8" y="58" text-anchor="middle" font-size="9.5" font-weight="800" fill="rgba(242,245,241,.5)">MOOD</text>
+          </svg>
+        </div>
+      </div>
+      <div onClick="{{ reset }}" style="margin-top:14px;text-align:center;font-size:13px;color:rgba(242,245,241,.35);cursor:pointer">Restart the check-in (demo)</div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  </div>
+
+  <sc-if value="{{ showFab }}" hint-placeholder-val="{{ true }}">
+  <div onClick="{{ openRpe }}" style="position:absolute;right:26px;bottom:26px;z-index:30;cursor:pointer">
+    <div style="{{ fabStyle }}"><div style="position:relative;font-size:15px;font-weight:800;color:#C8FF3D;letter-spacing:.2px">+ LOG SESSION</div></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ legendOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLegend }}" style="position:absolute;inset:0;z-index:40;background:rgba(5,6,5,.5)"></div>
+  <div style="{{ sheetStyle }}">
+    <div style="position:relative;max-width:560px;margin:0 auto">
+      <div style="width:38px;height:5px;border-radius:3px;background:rgba(242,245,241,.22);margin:0 auto 18px"></div>
+      <div style="font-size:11.5px;font-weight:800;letter-spacing:1.3px;color:#C8FF3D">{{ legendShort }}</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-1px;line-height:31px;margin-top:8px">{{ legendLong }}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:18px">
+        <sc-for list="{{ legendRows }}" as="r" hint-placeholder-count="5">
+          <div onClick="{{ r.tap }}" style="{{ r.wrap }}">
+            <div style="{{ r.badge }}">{{ r.n }}</div>
+            <div style="{{ r.text }}">{{ r.label }}</div>
+            <div style="{{ r.check }}">✓</div>
+          </div>
+        </sc-for>
+      </div>
+      <div onClick="{{ closeLegend }}" style="margin-top:16px;padding:17px;border-radius:18px;background:rgba(242,245,241,.08);border:1px solid rgba(242,245,241,.12);text-align:center;font-size:16px;font-weight:700;cursor:pointer">Close</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ rpeOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeRpe }}" style="position:absolute;inset:0;z-index:40;background:rgba(5,6,5,.5)"></div>
+  <div style="{{ sheetStyle }}">
+    <div style="position:relative;max-width:560px;margin:0 auto">
+      <div style="width:38px;height:5px;border-radius:3px;background:rgba(242,245,241,.22);margin:0 auto 18px"></div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-1px;line-height:31px">How hard did that session feel?</div>
+      <div style="font-size:14px;color:rgba(242,245,241,.5);margin-top:6px">1 is a stroll. 10 is everything you had.</div>
+      <div style="display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin-top:18px">
+        <sc-for list="{{ rpeOpts }}" as="r" hint-placeholder-count="10">
+          <div onClick="{{ r.tap }}" style="{{ r.style }}">{{ r.v }}</div>
+        </sc-for>
+      </div>
+      <div onClick="{{ saveRpe }}" style="{{ rpeSaveStyle }}">{{ rpeSaveLabel }}</div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</div>
+<p class="dv-next">Try next: "portrait iPad too" · "add a Sidebar of all my teams" · "now the Android/Material port"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1290,&quot;height&quot;:1000}}">
+const L = '#C8FF3D', HI = '#FF5A4E', WA = '#FFC24D';
+
+const QUESTIONS = [
+  { short: 'FATIGUE', long: 'How fatigued are you feeling today?', responses: ['Always tired', 'More tired than normal', 'Normal', 'Fresh', 'Very fresh'] },
+  { short: 'SLEEP', long: 'How was your quality of sleep last night?', responses: ['Insomnia', 'Restless sleep', 'Difficulty falling asleep', 'Good', 'Very restful'] },
+  { short: 'MUSCLES', long: 'How is your general soreness of muscles?', responses: ['Very sore', 'Increased soreness', 'Normal', 'Feeling good', 'Feeling great'] },
+  { short: 'STRESS', long: 'How stressed are you feeling in general?', responses: ['Highly stressed', 'Feeling stressed', 'Normal', 'Relaxed', 'Very relaxed'] },
+  { short: 'MOOD', long: 'What is your overall mood level?', responses: ['Highly annoyed, irritable or down', 'Snappiness at teammates or family', 'Less interested than normal', 'A generally good mood', 'Very positive mood'] },
+];
+
+const SIGNALS = [
+  {
+    short: 'FATIGUE', question: 'How fatigued are you feeling today?',
+    series: [3.6, 3.5, 3.6, 3.4, 3.3, 3.4, 3.2, 3.1, 3.2, 3.0, 2.9, 2.9, 2.7, 2.6],
+    base: 3.4, dist: [1, 3, 5, 2, 1],
+    note: 'Down a full point over two weeks, and eight of twelve sit at 3 or below. This is squad-wide, not two tired individuals.',
+    action: 'A lighter Thursday, or an early-night nudge before Saturday. A change here shows up in this line within about three days.',
+    lowest: ['Priya N.', 'Jonah A.', 'Cara D.'],
+  },
+  {
+    short: 'MUSCLES', question: 'How is your general soreness of muscles?',
+    series: [3.8, 3.6, 3.5, 3.4, 3.2, 3.3, 3.1, 3.0, 2.9, 3.0, 2.8, 2.7, 2.6, 2.5],
+    base: 3.5, dist: [2, 4, 4, 2, 0],
+    note: 'The steepest decline of the five, and it started the day after Sunday\'s game. Six athletes report more soreness than normal.',
+    action: 'A mobility or yoga session instead of Thursday conditioning. Cheap to try, and soreness responds faster than fatigue does.',
+    lowest: ['Priya N.', 'Ade K.', 'Liv S.'],
+  },
+  {
+    short: 'SLEEP', question: 'How was your quality of sleep last night?',
+    series: [3.4, 3.5, 3.3, 3.4, 3.2, 3.3, 3.5, 3.4, 3.3, 3.2, 3.4, 3.3, 3.2, 3.1],
+    base: 3.35, dist: [0, 2, 6, 3, 1],
+    note: 'Broadly flat. The dip in the last three days tracks Sunday\'s late kick-off rather than anything structural.',
+    action: '',
+    lowest: ['Tom B.', 'Ellis W.'],
+  },
+  {
+    short: 'STRESS', question: 'How stressed are you feeling in general?',
+    series: [3.0, 3.1, 3.2, 3.0, 3.3, 3.4, 3.2, 3.5, 3.4, 3.6, 3.5, 3.7, 3.6, 3.8],
+    base: 3.2, dist: [0, 1, 3, 5, 3],
+    note: 'The one clearly improving line — up 0.8 since exams finished. Nobody is in the bottom band today.',
+    action: 'Nothing to fix. Useful as your control line when deciding whether a fatigue change is training or life.',
+    lowest: ['Ellis W.'],
+  },
+  {
+    short: 'MOOD', question: 'What is your overall mood level?',
+    series: [3.9, 3.8, 4.0, 3.9, 3.8, 3.9, 4.0, 3.9, 3.8, 4.0, 3.9, 3.8, 3.9, 4.0],
+    base: 3.9, dist: [0, 0, 2, 6, 4],
+    note: 'Steady and high all fortnight. Mood holding while fatigue and soreness fall means the squad is tired, not fed up.',
+    action: '',
+    lowest: ['Jonah A.'],
+  },
+];
+
+const SQUAD = {
+  'Priya N.': { answers: [1, 2, 1, 2, 2], flag: 'high', alert: 'Flagged today: hamstring pain reported, and a third day below her own baseline. Worth a conversation, not an alarm.', meta: 'Checked in 07:12 · member since May', rpe: [6, 7, 4, 8, 5, 9, 3, 8, 6, 9], rpeNote: 'Three sessions at RPE 8+ in the last five days.', pain: [['SEV', 'Left hamstring · severe', 'Today 07:12 · "tight since Sunday\'s game"'], ['MOD', 'Left hamstring · moderate', 'Mon 24 Aug']], trend: 'M0,34 L23,38 L46,32 L69,40 L92,44 L115,38 L138,48 L161,52 L184,46 L207,58 L230,62 L253,56 L276,68 L300,74', avg: 1.6 },
+  'Tom B.': { answers: [3, 2, 3, 3, 3], flag: 'watch', alert: 'Sleep has been below his baseline for four days while load is climbing. One to watch rather than act on.', meta: 'Checked in 07:48 · member since Jan', rpe: [5, 6, 5, 7, 6, 7, 5, 8, 6, 7], rpeNote: 'Steady load, no spikes.', pain: [], trend: 'M0,44 L23,42 L46,46 L69,42 L92,48 L115,44 L138,50 L161,46 L184,52 L207,48 L230,54 L253,50 L276,56 L300,54', avg: 2.8 },
+  'Jonah A.': { answers: [2, 3, 3, 2, 3], flag: 'watch', alert: 'Load has risen fast — two RPE 9s this week — and stress is up with it. Consider capping his minutes on Saturday.', meta: 'Checked in 08:02 · member since Sep', rpe: [4, 6, 7, 9, 6, 9, 7, 8, 8, 9], rpeNote: 'Two RPE 9s this week, up from none last week.', pain: [['MILD', 'Right calf · mild', 'Tue 25 Aug']], trend: 'M0,40 L23,38 L46,42 L69,44 L92,40 L115,48 L138,44 L161,52 L184,48 L207,56 L230,52 L253,58 L276,54 L300,60', avg: 2.6 },
+  'Mel O.': { answers: [4, 4, 4, 4, 5], flag: null, alert: '', meta: 'Checked in 06:40 · admin · you', rpe: [5, 4, 6, 5, 5, 6, 4, 5, 6, 5], rpeNote: 'Coaching load only.', pain: [], trend: 'M0,52 L23,48 L46,50 L69,44 L92,46 L115,42 L138,44 L161,40 L184,42 L207,38 L230,40 L253,36 L276,38 L300,34', avg: 4.2 },
+  'Ade K.': { answers: [4, 5, 4, 3, 4], flag: null, alert: '', meta: 'Checked in 07:20 · member since Mar', rpe: [6, 7, 6, 8, 7, 7, 6, 8, 7, 8], rpeNote: 'Consistent, high, and holding up well.', pain: [['MILD', 'Left quad · mild', 'Sun 23 Aug']], trend: 'M0,50 L23,46 L46,48 L69,44 L92,46 L115,40 L138,44 L161,38 L184,42 L207,36 L230,40 L253,34 L276,38 L300,32', avg: 4.0 },
+  'Liv S.': { answers: [5, 4, 5, 4, 4], flag: null, alert: '', meta: 'Checked in 07:05 · member since Feb', rpe: [7, 8, 6, 8, 7, 9, 6, 8, 7, 8], rpeNote: 'Highest average load in the squad.', pain: [], trend: 'M0,44 L23,40 L46,42 L69,36 L92,40 L115,34 L138,38 L161,32 L184,36 L207,30 L230,34 L253,28 L276,32 L300,26', avg: 4.4 },
+  'Ren T.': { answers: [3, 4, 3, 4, 4], flag: null, alert: '', meta: 'Checked in 08:15 · member since Nov', rpe: [5, 6, 5, 7, 5, 6, 5, 7, 6, 6], rpeNote: 'Moderate load throughout.', pain: [], trend: 'M0,48 L23,46 L46,50 L69,44 L92,48 L115,42 L138,46 L161,42 L184,44 L207,40 L230,44 L253,40 L276,42 L300,40', avg: 3.6 },
+  'Kai M.': { answers: [4, 3, 4, 5, 4], flag: null, alert: '', meta: 'Checked in 07:33 · member since Jun', rpe: [6, 5, 7, 6, 6, 7, 5, 7, 6, 7], rpeNote: 'No spikes worth flagging.', pain: [], trend: 'M0,46 L23,44 L46,42 L69,44 L92,40 L115,42 L138,38 L161,40 L184,36 L207,38 L230,34 L253,36 L276,32 L300,34', avg: 4.0 },
+};
+
+const MISSING = ['Cara D.', 'Ellis W.', 'Nina F.', 'Sam T.'];
+
+class Component extends DCLogic {
+  state = {
+    view: 'signals', selected: null, range: '14 DAYS',
+    glass: true, legend: null, rpeOpen: false, rpe: 0,
+    a: [0, 0, 0, 0, 0], avail: 0, done: false,
+    qType: 'Scale 1–5', required: false,
+  };
+
+  tile(on, big) {
+    return `height:${big ? 62 : 50}px;border-radius:${big ? 17 : 14}px;display:flex;align-items:center;justify-content:center;font-size:${on ? 24 : 21}px;font-weight:${on ? 800 : 700};cursor:pointer;transition:transform .14s cubic-bezier(.2,.8,.2,1),background .14s;` +
+      (on ? `background:${L};color:#0B0D0C;transform:scale(1.05);box-shadow:0 8px 22px rgba(200,255,61,.3)`
+        : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.32)`);
+  }
+
+  pick(name) { this.setState({ view: 'athlete', selected: name }); }
+
+  renderVals() {
+    const s = this.state, g = s.glass;
+    const glassBox = (radius) => g
+      ? `backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);background:rgba(242,245,241,.1);border:.5px solid rgba(242,245,241,.18);box-shadow:inset 1.5px 1.5px 1px rgba(255,255,255,.2),0 12px 34px rgba(0,0,0,.45);border-radius:${radius}px`
+      : `background-color:#161A15;border:1px solid rgba(242,245,241,.14);box-shadow:0 10px 30px rgba(0,0,0,.5);border-radius:${radius}px`;
+
+    const view = s.view;
+    const coachView = ['signals', 'athlete'].indexOf(view) > -1;
+
+    const railItems = [['signals', 'SQUAD'], ['roster', 'ROSTER'], ['questions', 'QUESTIONS'], ['today', 'TODAY']].map(([id, label]) => {
+      const on = view === id || (id === 'signals' && view === 'athlete');
+      return {
+        label, tap: () => this.setState({ view: id, selected: id === 'signals' ? null : s.selected }),
+        wrap: 'display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:4px 0;width:100%',
+        glyph: `width:26px;height:26px;border-radius:${id === 'signals' ? '9px' : id === 'roster' ? '13px' : id === 'questions' ? '5px' : '8px'};background:${on ? L : 'rgba(242,245,241,.28)'};transition:background .16s`,
+        cap: `font-size:9px;font-weight:800;letter-spacing:.5px;text-align:center;color:${on ? L : 'rgba(242,245,241,.4)'}`,
+      };
+    });
+
+    const y = (v, top, bot, lo, hi) => +(bot - ((v - lo) / (hi - lo)) * (bot - top)).toFixed(1);
+
+    const signals = SIGNALS.map(sig => {
+      const series = sig.series, last = series[series.length - 1];
+      const d = +(last - series[0]).toFixed(1);
+      const bad = d <= -0.2, good = d >= 0.2;
+      const tone = bad ? (Math.abs(d) >= 0.7 ? HI : WA) : good ? L : 'rgba(242,245,241,.5)';
+      const lo = 2.2, hi = 4.3, top = 8, bot = 96;
+      const xs = j => +(j * (300 / (series.length - 1))).toFixed(1);
+      const line = series.map((v, j) => `${j === 0 ? 'M' : 'L'}${xs(j)},${y(v, top, bot, lo, hi)}`).join(' ');
+      return {
+        short: sig.short, question: sig.question, tone,
+        card: 'border-radius:24px;padding:20px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)',
+        avg: last.toFixed(1),
+        avgStyle: `font-size:30px;font-weight:800;letter-spacing:-1.2px;line-height:32px;color:${tone}`,
+        delta: `${d > 0 ? '↑' : d < 0 ? '↓' : '→'} ${Math.abs(d).toFixed(1)} · 14d`,
+        deltaStyle: `font-size:11px;font-weight:800;letter-spacing:.4px;margin-top:3px;color:${tone}`,
+        line,
+        band: `${line} L300,${bot} L0,${bot} Z`,
+        fill: bad ? 'rgba(255,90,78,.07)' : good ? 'rgba(200,255,61,.07)' : 'rgba(242,245,241,.04)',
+        baseY: y(sig.base, top, bot, lo, hi),
+        lastY: y(last, top, bot, lo, hi),
+        axisFrom: '14 DAYS AGO',
+        dist: sig.dist.map((n, j) => ({
+          n: n || '', label: j + 1,
+          style: `flex:${Math.max(n, 0.35)};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#0B0D0C;background:${j === 0 ? HI : j === 1 ? 'rgba(255,90,78,.6)' : j === 2 ? WA : j === 3 ? 'rgba(200,255,61,.6)' : L};opacity:${n ? 1 : .18}`,
+          capStyle: `flex:${Math.max(n, 0.35)};text-align:center;font-size:9.5px;font-weight:800;color:rgba(242,245,241,.3)`,
+        })),
+        note: sig.note,
+        hasAction: !!sig.action,
+        action: sig.action,
+        actionLabel: bad ? 'WORTH TRYING' : 'KEEP DOING',
+        actionLabelStyle: `font-size:10.5px;font-weight:800;letter-spacing:1px;color:${bad ? WA : L}`,
+        actionWrap: `display:flex;gap:11px;margin-top:12px;padding:13px 14px;border-radius:16px;background:${bad ? 'rgba(255,194,77,.08)' : 'rgba(200,255,61,.07)'};border:1px solid ${bad ? 'rgba(255,194,77,.26)' : 'rgba(200,255,61,.22)'}`,
+        actionIcon: `width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:${bad ? 'rgba(255,194,77,.18)' : 'rgba(200,255,61,.18)'};color:${bad ? WA : L}`,
+        lowest: sig.lowest.map(name => ({
+          name, tap: () => SQUAD[name] && this.pick(name),
+          style: `padding:4px 9px;border-radius:8px;font-size:11.5px;font-weight:700;background:rgba(242,245,241,.08);color:rgba(242,245,241,.75);cursor:${SQUAD[name] ? 'pointer' : 'default'}`,
+        })),
+      };
+    });
+
+    const flagged = [
+      { name: 'Priya N.', icon: '!', tone: HI, chips: [['Hamstring pain', HI], ['3rd day low', null]] },
+      { name: 'Tom B.', icon: '~', tone: WA, chips: [['Sleep below baseline', WA]] },
+      { name: 'Jonah A.', icon: '~', tone: WA, chips: [['Load rising fast', WA], ['Stress up', null]] },
+    ].map(f => ({
+      name: f.name, icon: f.icon,
+      tap: () => this.pick(f.name),
+      wrap: `display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:16px;cursor:pointer;transition:background .14s;` +
+        (s.selected === f.name ? `background:rgba(242,245,241,.12);border:1px solid rgba(242,245,241,.18)` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08)`),
+      iconStyle: `width:32px;height:32px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;background:${f.tone === HI ? 'rgba(255,90,78,.16)' : 'rgba(255,194,77,.16)'};color:${f.tone}`,
+      chips: f.chips.map(([label, tone]) => ({
+        label,
+        style: `font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:7px;` + (tone
+          ? `background:${tone === HI ? 'rgba(255,90,78,.14)' : 'rgba(255,194,77,.14)'};color:${tone === HI ? '#FF8A80' : '#FFD98A'}`
+          : `background:rgba(242,245,241,.09);color:rgba(242,245,241,.6)`),
+      })),
+    }));
+
+    const others = ['Mel O.', 'Ade K.', 'Liv S.', 'Ren T.', 'Kai M.'].map(name => {
+      const rec = SQUAD[name], on = s.selected === name;
+      return {
+        name, initials: name.split(' ').map(w => w[0]).join(''),
+        tap: () => this.pick(name),
+        wrap: `display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:14px;cursor:pointer;transition:background .14s;${on ? 'background:rgba(242,245,241,.12)' : ''}`,
+        avatar: `width:30px;height:30px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;background:rgba(242,245,241,.09);color:rgba(242,245,241,.65)`,
+        sub: 'in at ' + rec.meta.split(' ')[2],
+        subStyle: 'font-size:12px;color:rgba(242,245,241,.4);margin-top:1px',
+        score: rec.avg.toFixed(1),
+        scoreStyle: `font-size:15px;font-weight:800;letter-spacing:-.3px;color:${rec.avg < 2.5 ? HI : rec.avg < 3.3 ? WA : L}`,
+      };
+    }).concat(MISSING.map(name => ({
+      name, initials: name.split(' ').map(w => w[0]).join(''),
+      tap: () => {},
+      wrap: 'display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:14px;opacity:.5',
+      avatar: 'width:30px;height:30px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;background:rgba(242,245,241,.06);color:rgba(242,245,241,.4);border:1px dashed rgba(242,245,241,.18)',
+      sub: 'not in yet',
+      subStyle: 'font-size:12px;color:rgba(242,245,241,.35);margin-top:1px',
+      score: '—',
+      scoreStyle: 'font-size:15px;font-weight:800;color:rgba(242,245,241,.25)',
+    })));
+
+    const name = s.selected || 'Priya N.';
+    const rec = SQUAD[name];
+    const ang = [-90, -18, 54, 126, 198];
+    const pt = (v, i, cx, cy, r0, rr) => {
+      const r = r0 + (Math.max(1, v) / 5) * rr, t = ang[i] * Math.PI / 180;
+      return [+(cx + r * Math.cos(t)).toFixed(1), +(cy + r * Math.sin(t)).toFixed(1)];
+    };
+    const aPts = rec.answers.map((v, i) => pt(v, i, 100, 82, 12, 54));
+    const aTone = rec.flag === 'high' ? HI : rec.flag === 'watch' ? WA : L;
+
+    const myPts = [0, 1, 2, 3, 4].map(i => pt(s.a[i] || 3, i, 100, 82, 12, 54));
+
+    const legendQ = s.legend != null ? QUESTIONS[s.legend] : null;
+    const answered = s.a.every(v => v > 0) && s.avail > 0;
+    const left = s.a.filter(v => !v).length + (s.avail ? 0 : 1);
+
+    return {
+      railStyle: `position:relative;z-index:20;width:86px;flex-shrink:0;margin:14px 0 14px 14px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:18px;${glassBox(26)}`,
+      railItems,
+      railGlassBtn: `padding:8px 6px;border-radius:11px;border:1px solid rgba(242,245,241,.16);font-size:9px;font-weight:800;letter-spacing:.4px;text-align:center;color:rgba(242,245,241,.6);cursor:pointer;width:100%`,
+      toggleGlass: () => this.setState({ glass: !g }),
+      glassLabel: g ? 'GLASS ON' : 'REDUCED',
+
+      coachView,
+      onSignals: view === 'signals',
+      onAthlete: view === 'athlete',
+      onRoster: view === 'roster',
+      onQuestions: view === 'questions',
+      onToday: view === 'today',
+
+      completion: Array.from({ length: 12 }, (_, i) => ({
+        style: `flex:1;height:6px;border-radius:3px;background:${i < 8 ? L : 'rgba(242,245,241,.12)'}`,
+      })),
+      flagged, others,
+
+      ranges: ['7 DAYS', '14 DAYS', '6 WEEKS'].map(label => {
+        const on = s.range === label;
+        return {
+          label, tap: () => this.setState({ range: label }),
+          style: `padding:9px 14px;border-radius:11px;font-size:11.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;${on ? `background:${L};color:#0B0D0C` : 'color:rgba(242,245,241,.55)'}`,
+        };
+      }),
+
+      headline: [
+        { label: 'CHECKED IN TODAY', val: '8/12', delta: '↑ 2', note: 'Best midweek turnout in three weeks.', tone: L },
+        { label: 'SQUAD AVERAGE', val: '3.2', delta: '↓ 0.4', note: 'Fourth consecutive day below baseline.', tone: WA },
+        { label: 'NEED A WORD', val: '3', delta: '↑ 1', note: 'One pain report, two trending down.', tone: HI },
+      ].map(h => ({
+        label: h.label, val: h.val, delta: h.delta, note: h.note,
+        wrap: 'flex:1;border-radius:22px;padding:18px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)',
+        valStyle: `font-size:34px;font-weight:800;letter-spacing:-1.6px;line-height:34px;color:${h.tone}`,
+        deltaStyle: `font-size:12px;font-weight:800;color:${h.tone}`,
+      })),
+      signals,
+
+      athlete: {
+        name, initials: name.split(' ').map(w => w[0]).join(''),
+        meta: rec.meta, tone: aTone,
+        avatar: `width:54px;height:54px;border-radius:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;background:${rec.flag === 'high' ? 'rgba(255,90,78,.16)' : rec.flag === 'watch' ? 'rgba(255,194,77,.16)' : 'rgba(200,255,61,.14)'};color:${aTone}`,
+        flagged: !!rec.flag,
+        alert: rec.alert,
+        alertGlyph: rec.flag === 'high' ? '!' : '~',
+        alertColor: rec.flag === 'high' ? '#FF8A80' : '#FFD98A',
+        alertWrap: `display:flex;gap:12px;margin-top:16px;padding:16px 18px;border-radius:20px;background:${rec.flag === 'high' ? 'rgba(255,90,78,.09)' : 'rgba(255,194,77,.09)'};border:1px solid ${rec.flag === 'high' ? 'rgba(255,90,78,.28)' : 'rgba(255,194,77,.28)'}`,
+        alertIcon: `width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:${rec.flag === 'high' ? 'rgba(255,90,78,.18)' : 'rgba(255,194,77,.18)'};color:${aTone}`,
+        basePts: [3.4, 3.5, 3.3, 3.4, 3.7].map((v, i) => pt(v, i, 100, 82, 12, 54)).map(p => p.join(',')).join(' '),
+        pts: aPts.map(p => p.join(',')).join(' '),
+        dots: aPts.map(p => ({ x: p[0], y: p[1] })),
+        answers: rec.answers.map((v, i) => ({
+          short: QUESTIONS[i].short, v,
+          label: QUESTIONS[i].responses[v - 1],
+          badge: `width:30px;height:30px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#0B0D0C;background:${v <= 2 ? HI : v === 3 ? WA : L}`,
+        })),
+        rpeBars: rec.rpe.map(v => ({
+          style: `flex:1;height:${v * 9}%;border-radius:4px;background:${v >= 8 ? WA : 'rgba(200,255,61,.55)'}`,
+        })),
+        rpeNote: rec.rpeNote,
+        trend: rec.trend,
+        painTitle: rec.pain.length ? 'PAIN REPORTED' : 'PAIN REPORTED · NONE',
+        noPain: rec.pain.length === 0,
+        pain: rec.pain.map(([sev, zone, when]) => ({
+          sev, zone, when,
+          badge: `width:44px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;background:${sev === 'SEV' ? 'rgba(255,90,78,.16)' : sev === 'MOD' ? 'rgba(255,194,77,.16)' : 'rgba(242,245,241,.09)'};color:${sev === 'SEV' ? HI : sev === 'MOD' ? WA : 'rgba(242,245,241,.6)'}`,
+        })),
+      },
+      backToSignals: () => this.setState({ view: 'signals' }),
+
+      roster: Object.keys(SQUAD).map(n => {
+        const r = SQUAD[n], admin = r.meta.indexOf('admin') > -1;
+        return {
+          name: n, initials: n.split(' ').map(w => w[0]).join(''),
+          tap: () => this.pick(n),
+          wrap: 'display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid rgba(242,245,241,.06);cursor:pointer',
+          avatar: 'width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:rgba(242,245,241,.09);color:rgba(242,245,241,.65)',
+          role: admin ? 'Admin' : 'Member',
+          roleStyle: `width:110px;font-size:13.5px;font-weight:${admin ? 700 : 500};color:${admin ? L : 'rgba(242,245,241,.55)'}`,
+          last: 'Today ' + r.meta.split(' ')[2],
+          avg: r.avg.toFixed(1),
+          avgStyle: `width:90px;text-align:right;font-size:16px;font-weight:800;letter-spacing:-.3px;color:${r.avg < 2.5 ? HI : r.avg < 3.3 ? WA : L}`,
+        };
+      }).concat(MISSING.map(n => ({
+        name: n, initials: n.split(' ').map(w => w[0]).join(''),
+        tap: () => {},
+        wrap: 'display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid rgba(242,245,241,.06);opacity:.55',
+        avatar: 'width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:rgba(242,245,241,.06);color:rgba(242,245,241,.4);border:1px dashed rgba(242,245,241,.18)',
+        role: 'Member',
+        roleStyle: 'width:110px;font-size:13.5px;color:rgba(242,245,241,.5)',
+        last: 'Yesterday',
+        avg: '—',
+        avgStyle: 'width:90px;text-align:right;font-size:16px;font-weight:800;color:rgba(242,245,241,.25)',
+      }))),
+
+      qTypes: ['Scale 1–5', 'Yes / no', 'Short text'].map(label => {
+        const on = s.qType === label;
+        return {
+          label, tap: () => this.setState({ qType: label }),
+          style: `flex:1;text-align:center;padding:13px 4px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;` +
+            (on ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.06);border:1px solid rgba(242,245,241,.1);color:rgba(242,245,241,.6)`),
+        };
+      }),
+      toggleRequired: () => this.setState({ required: !s.required }),
+      reqTrack: `width:51px;height:31px;border-radius:16px;padding:2px;box-sizing:border-box;display:flex;cursor:pointer;flex-shrink:0;transition:background .18s;background:${s.required ? L : 'rgba(242,245,241,.16)'};justify-content:${s.required ? 'flex-end' : 'flex-start'}`,
+      reqLabel: s.required ? 'REQUIRED' : 'OPTIONAL',
+      previewRowStyle: s.qType === 'Scale 1–5'
+        ? 'display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px'
+        : 'display:flex;gap:8px;margin-top:14px',
+      previewOpts: s.qType === 'Scale 1–5'
+        ? [1, 2, 3, 4, 5].map(v => ({ v, style: this.tile(false, false) }))
+        : s.qType === 'Yes / no'
+          ? ['Yes', 'No'].map(v => ({ v, style: 'flex:1;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.45)' }))
+          : [{ v: 'Type an answer…', style: 'flex:1;height:50px;border-radius:14px;display:flex;align-items:center;padding:0 14px;font-size:15px;background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.35)' }],
+
+      todayTitle: s.done ? "You're done" : 'How are you feeling?',
+      notDone: !s.done,
+      isDone: s.done,
+      blocks: [0, 1, 2, 3, 4].map(i => {
+        const q = QUESTIONS[i], v = s.a[i];
+        return {
+          short: q.short,
+          answer: v ? q.responses[v - 1] : '',
+          answerStyle: `font-size:12.5px;font-weight:800;letter-spacing:.3px;text-align:right;max-width:180px;color:${v ? L : 'transparent'}`,
+          info: () => this.setState({ legend: i }),
+          opts: q.responses.map((_, j) => ({
+            v: j + 1,
+            tap: () => this.setState(st => { const a = [...st.a]; a[i] = a[i] === j + 1 ? 0 : j + 1; return { a }; }),
+            style: this.tile(v === j + 1, true),
+          })),
+        };
+      }),
+      avails: [[1, 'REDUCED'], [2, 'AVAILABLE'], [3, 'FULLY']].map(([v, label]) => {
+        const on = s.avail === v;
+        return {
+          label, tap: () => this.setState({ avail: on ? 0 : v }),
+          style: `flex:1;padding:16px 6px;border-radius:16px;text-align:center;font-size:12.5px;font-weight:800;letter-spacing:.4px;cursor:pointer;` +
+            (on ? `background:rgba(200,255,61,.14);border:1.5px solid ${L};color:${L}` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.08);color:rgba(242,245,241,.4)`),
+        };
+      }),
+      submitLabel: answered ? 'SUBMIT CHECK-IN' : `${left} TO GO`,
+      submitStyle: `padding:19px;border-radius:20px;text-align:center;font-size:17px;font-weight:800;transition:all .18s;` +
+        (answered ? `background:${L};color:#0B0D0C;cursor:pointer;box-shadow:0 10px 30px rgba(200,255,61,.3)`
+          : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.35);cursor:default`),
+      submit: () => answered && this.setState({ done: true }),
+      reset: () => this.setState({ done: false, a: [0, 0, 0, 0, 0], avail: 0 }),
+      myPts: myPts.map(p => p.join(',')).join(' '),
+      myDots: myPts.map(p => ({ x: p[0], y: p[1] })),
+
+      legendOpen: s.legend != null,
+      legendShort: legendQ ? legendQ.short : '',
+      legendLong: legendQ ? legendQ.long : '',
+      legendRows: (legendQ ? legendQ.responses : []).map((label, j) => {
+        const on = s.legend != null && s.a[s.legend] === j + 1;
+        return {
+          n: j + 1, label,
+          tap: () => {
+            const i = s.legend;
+            this.setState(st => { const a = [...st.a]; a[i] = j + 1; return { a }; });
+            setTimeout(() => this.setState({ legend: null }), 160);
+          },
+          wrap: `display:flex;align-items:center;gap:13px;padding:14px 15px;border-radius:16px;cursor:pointer;` +
+            (on ? `background:rgba(200,255,61,.12);border:1.5px solid ${L}` : `background:rgba(242,245,241,.05);border:1px solid rgba(242,245,241,.09)`),
+          badge: `width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;` +
+            (on ? `background:${L};color:#0B0D0C` : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.5)`),
+          text: `flex:1;font-size:15.5px;line-height:20px;font-weight:${on ? 700 : 500};color:${on ? L : 'rgba(242,245,241,.85)'}`,
+          check: `font-size:13px;font-weight:800;color:${on ? L : 'transparent'}`,
+        };
+      }),
+      closeLegend: () => this.setState({ legend: null }),
+
+      showFab: view !== 'today' || s.done,
+      fabStyle: `position:relative;padding:0 20px;height:52px;display:flex;align-items:center;${glassBox(26)}`,
+      rpeOpen: s.rpeOpen,
+      openRpe: () => this.setState({ rpeOpen: true }),
+      closeRpe: () => this.setState({ rpeOpen: false }),
+      rpeOpts: Array.from({ length: 10 }, (_, i) => {
+        const v = i + 1;
+        return { v, tap: () => this.setState({ rpe: v }), style: this.tile(s.rpe === v, false) };
+      }),
+      rpeSaveLabel: s.rpe ? 'SAVE SESSION' : 'PICK A NUMBER',
+      rpeSaveStyle: `margin-top:16px;padding:18px;border-radius:20px;text-align:center;font-size:17px;font-weight:800;` +
+        (s.rpe ? `background:${L};color:#0B0D0C;cursor:pointer;box-shadow:0 10px 28px rgba(200,255,61,.3)` : `background:rgba(242,245,241,.08);color:rgba(242,245,241,.35)`),
+      saveRpe: () => s.rpe && this.setState({ rpeOpen: false, rpe: 0 }),
+      sheetStyle: `position:absolute;left:0;right:0;bottom:0;z-index:45;padding:16px 28px 34px;animation:sheet .3s cubic-bezier(.2,.8,.2,1) both;border-radius:34px 34px 0 0;${g ? 'backdrop-filter:blur(34px) saturate(180%);-webkit-backdrop-filter:blur(34px) saturate(180%);background:rgba(28,32,26,.72);border-top:.5px solid rgba(242,245,241,.2)' : 'background:#171B16;border-top:1px solid rgba(242,245,241,.14)'};box-shadow:0 -14px 44px rgba(0,0,0,.6)`,
+    };
+  }
+}
+</script>
+</body>
+</html>
