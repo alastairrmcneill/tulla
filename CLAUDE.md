@@ -25,7 +25,7 @@ This is a solo, part-time project (10–15 hrs/week), built across many short, s
 
 ## Tools
 
-- Use the Supabase MCP server for schema, migrations, and RLS work when it's connected — don't hand-write SQL blind if the tool is available to check against the real project. Use branching in the supabase project when needing to test changes
+- Use the Supabase MCP server for schema, migrations, and RLS work when it's connected — don't hand-write SQL blind if the tool is available to check against the real project.
 - Use the Sentry MCP server to verify error-tracking is actually wired correctly, rather than assuming the integration code is sufficient.
 - Use the Mixpanel MCP server to verify the funnel events from the technical plan (Section 7 and 11) are actually firing, not just that the tracking calls exist in code.
 - Use the RevenueCat MCP to setup the projects and configure the settings for the app store and play store as well as setting up paywall experiments.
