@@ -63,7 +63,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Set default branch protection: require the CI check (added in 1.14) to pass before merge, once that check exists — don't block on it now.
 **Done when:** `git remote -v` shows the GitHub remote, `main` pushed, repo visible in GitHub.
 
-### 1.2 — App identity & config `[ ]`
+### 1.2 — App identity & config `[x]`
 **Depends on:** nothing.
 **References:** tech plan §12 (env/build profiles depend on the app identity existing first).
 **Implementation:**

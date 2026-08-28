@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tulla",
+    "name": "Tulla",
     "slug": "tulla",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,11 @@
     "scheme": "tulla",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.alastairrmcneill.tulla",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "com.alastairrmcneill.tulla",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
