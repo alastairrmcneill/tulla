@@ -1,14 +1,15 @@
 import { version } from 'expo/package.json';
 import { Image } from 'expo-image';
-import { useColorScheme, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
-import { Spacing } from '@/constants/theme';
+import { useTheme } from '@/theme';
 
 export function WebBadge() {
-  const scheme = useColorScheme();
+  const { mode, spacing } = useTheme();
+  const styles = getStyles(spacing);
 
   return (
     <ThemedView style={styles.container}>
@@ -17,7 +18,7 @@ export function WebBadge() {
       </ThemedText>
       <Image
         source={
-          scheme === 'dark'
+          mode === 'dark'
             ? require('@/assets/images/expo-badge-white.png')
             : require('@/assets/images/expo-badge.png')
         }
@@ -27,17 +28,19 @@ export function WebBadge() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: Spacing.five,
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  versionText: {
-    textAlign: 'center',
-  },
-  badgeImage: {
-    width: 123,
-    aspectRatio: 123 / 24,
-  },
-});
+function getStyles(spacing: ReturnType<typeof useTheme>['spacing']) {
+  return StyleSheet.create({
+    container: {
+      padding: spacing['3xl'],
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    versionText: {
+      textAlign: 'center',
+    },
+    badgeImage: {
+      width: 123,
+      aspectRatio: 123 / 24,
+    },
+  });
+}

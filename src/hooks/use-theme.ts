@@ -1,14 +1,5 @@
 /**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
+ * @deprecated import `useTheme` from `@/theme` directly. Kept as a thin
+ * re-export so existing call sites don't need to change their import path.
  */
-
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export function useTheme() {
-  const scheme = useColorScheme();
-  const theme = scheme === 'unspecified' ? 'light' : scheme;
-
-  return Colors[theme];
-}
+export { useTheme } from '@/theme';

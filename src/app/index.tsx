@@ -7,7 +7,7 @@ import { HintRow } from '@/components/hint-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useTheme } from '@/theme';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -29,6 +29,9 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const { spacing, radius, layout } = useTheme();
+  const styles = getStyles(spacing, radius, layout);
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -43,7 +46,7 @@ export default function HomeScreen() {
           get started
         </ThemedText>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
+        <ThemedView type="surfaceElevated" style={styles.stepContainer}>
           <HintRow
             title="Try editing"
             hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
@@ -61,38 +64,44 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});
+function getStyles(
+  spacing: ReturnType<typeof useTheme>['spacing'],
+  radius: ReturnType<typeof useTheme>['radius'],
+  layout: ReturnType<typeof useTheme>['layout'],
+) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    safeArea: {
+      flex: 1,
+      paddingHorizontal: spacing['2xl'],
+      alignItems: 'center',
+      gap: spacing.lg,
+      paddingBottom: layout.tabBarHeight + spacing.lg,
+      maxWidth: layout.maxContentWidth,
+    },
+    heroSection: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1,
+      paddingHorizontal: spacing['2xl'],
+      gap: spacing['2xl'],
+    },
+    title: {
+      textAlign: 'center',
+    },
+    code: {
+      textTransform: 'uppercase',
+    },
+    stepContainer: {
+      gap: spacing.lg,
+      alignSelf: 'stretch',
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing['2xl'],
+      borderRadius: radius.extraLarge2,
+    },
+  });
+}
