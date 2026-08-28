@@ -82,7 +82,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Confirm `expo-dev-client` is installed (required for `development` profile).
 **Done when:** `eas.json` committed with all three profiles; `eas build --profile development --platform ios` queues successfully (doesn't need to finish before moving on, just needs to queue without config errors).
 
-### 1.4 — Liquid Glass smoke test `[ ]`
+### 1.4 — Liquid Glass smoke test `[x]`
 **Depends on:** 1.3.
 **References:** tech plan §2 ("Liquid Glass smoke test" as the explicit first-phase gate), §9, §11 (Reduce Transparency fallback).
 **Implementation:**
