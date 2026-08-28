@@ -92,7 +92,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Delete the throwaway surface once confirmed working — this task is a gate, not a shipped component (real glass components come in 6.1).
 **Done when:** glass effect visibly renders on iOS 26 dev build; toggling Reduce Transparency in the simulator's Accessibility settings shows the flat fallback instead.
 
-### 1.5 — Supabase project `[ ]`
+### 1.5 — Supabase project `[x]`
 **Depends on:** nothing.
 **References:** tech plan §1, §3.
 **Implementation:**
