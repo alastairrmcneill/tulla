@@ -73,7 +73,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Leave icon/splash assets as the current Expo-starter placeholders for now — real icon generation is a separate, later pass (the `app-icon` skill), not part of this plan's code epics.
 **Done when:** `app.json` has both identifiers, app still builds locally (`npx expo start`).
 
-### 1.3 — EAS project + build profiles `[ ]`
+### 1.3 — EAS project + build profiles `[x]`
 **Depends on:** 1.2.
 **References:** tech plan §2 ("set up an EAS development build on day one, not Expo Go"), §12 (three profiles).
 **Implementation:**
