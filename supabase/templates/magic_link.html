@@ -1,0 +1,30 @@
+<!--
+  First-pass draft (1.8) — no copy/design spec exists for auth emails in
+  either doc (product spec §3 step 7 only covers in-app framing). Minimal,
+  on-brand, functional; treat like the app-icon placeholder — a real
+  copy/design pass is separate later work, not blocking this task.
+-->
+<div style="background-color:#f2f5f1;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div style="max-width:420px;margin:0 auto;background-color:#ffffff;border-radius:16px;padding:32px;">
+    <p style="margin:0 0 24px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#0B0D0C;">
+      Tulla
+    </p>
+    <h1 style="margin:0 0 12px;font-size:20px;line-height:1.4;color:#0B0D0C;">
+      Your sign-in link
+    </h1>
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.5;color:#4b524a;">
+      Tap the button below to sign in to Tulla. This link expires shortly and can only be used once.
+    </p>
+    <a href="{{ .ConfirmationURL }}"
+       style="display:inline-block;background-color:#C8FF3D;color:#0B0D0C;font-size:15px;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:999px;">
+      Open Tulla
+    </a>
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#8a908a;">
+      If the button doesn't work, copy and paste this link:<br />
+      <a href="{{ .ConfirmationURL }}" style="color:#4b524a;word-break:break-all;">{{ .ConfirmationURL }}</a>
+    </p>
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#8a908a;">
+      Didn't request this? You can safely ignore this email.
+    </p>
+  </div>
+</div>

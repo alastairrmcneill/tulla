@@ -155,12 +155,15 @@ max_indexes = 5
 [auth]
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
-# in emails.
-site_url = "http://127.0.0.1:3000"
+# in emails. No web app exists (mobile-only, tech plan §1) -- this is the custom scheme (1.2),
+# open decision #2 in CODING_PLAN.md: custom-scheme-only for v1, revisit in 8.4.
+site_url = "tulla://"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+# tulla://join/* is reserved now for 3.9's join-link flow (not built yet) -- 1.8's own task text
+# says to verify the general scheme-routing pattern here, not just the one auth path.
+additional_redirect_urls = ["tulla://auth/callback", "tulla://join/*"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -223,11 +226,16 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
+# Deliberately false (1.8, confirmed with the user) -- neither spec doc addresses this; chosen for
+# smoother password-signup UX. Magic link is unaffected either way (it's inherently
+# confirm-by-tapping-the-link).
 enable_confirmations = false
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+# Bumped from the generated local-dev default of "1s" -- that value has no per-address cooldown at
+# all, which is fine for local testing but not something to push to the live project.
+max_frequency = "60s"
 # Number of characters used in the email OTP.
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
@@ -247,6 +255,15 @@ otp_expiry = 3600
 # [auth.email.template.invite]
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
+
+# First-pass draft copy (1.8) -- see supabase/templates/magic_link.html's own note.
+[auth.email.template.magic_link]
+subject = "Your Tulla sign-in link"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Tulla password"
+content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

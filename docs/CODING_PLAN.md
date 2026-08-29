@@ -133,7 +133,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - `notifications`: own-row `select`/`update` (marking read) only.
 **Done when:** for each table, at least one manual test via `execute_sql` (impersonating different `auth.uid()` values, or via two test accounts) confirming both an allowed read and a denied read behave as expected — not just "policy exists," actually exercised once.
 
-### 1.8 — Supabase Auth configuration `[ ]`
+### 1.8 — Supabase Auth configuration `[x]`
 **Depends on:** 1.5.
 **References:** tech plan §5; product spec §3 step 7 (sign-up framing), §15 (no social login in v1).
 **Implementation:**
