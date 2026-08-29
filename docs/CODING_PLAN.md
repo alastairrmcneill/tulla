@@ -119,7 +119,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Indexes: `daily_checkins(profile_id, date)`, `team_members(team_id, profile_id)`, `rpe_logs(profile_id, logged_at)` at minimum.
 **Done when:** migration applies cleanly; `list_tables` shows all 10 tables with the right columns; `get_advisors` (security/performance) run once and any real findings noted (not necessarily fixed yet — RLS is next).
 
-### 1.7 — Row-Level Security `[ ]`
+### 1.7 — Row-Level Security `[x]`
 **Depends on:** 1.6.
 **References:** tech plan §4 in full — this section's SQL is close to copy-ready, the task is applying it correctly and extending it to every table it says to extend it to.
 **Implementation:**
