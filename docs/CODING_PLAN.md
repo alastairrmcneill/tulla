@@ -102,7 +102,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Record the project URL and anon key locations for 1.13's `lib/supabase.ts` and for EAS env vars (1.3 profiles will need these — come back and add them once this task lands).
 **Done when:** `supabase projects list` shows the linked project; `list_tables` via MCP returns the empty default schema.
 
-### 1.6 — Core schema migration `[ ]`
+### 1.6 — Core schema migration `[x]`
 **Depends on:** 1.5.
 **References:** tech plan §3 (full table list and rationale — read this section in full before writing DDL, don't just skim the table).
 **Implementation:** one migration (`mcp__supabase__apply_migration`) creating, in dependency order:
