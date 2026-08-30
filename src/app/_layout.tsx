@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { initMixpanel } from '@/lib/mixpanel';
+import { initOfflineQueue } from '@/lib/offline-queue';
 import { Sentry, initSentry } from '@/lib/sentry';
 import { ThemeProvider, useTheme } from '@/theme';
 
@@ -32,6 +33,7 @@ function Navigation() {
 function RootLayout() {
   useEffect(() => {
     initMixpanel();
+    return initOfflineQueue();
   }, []);
 
   return (
