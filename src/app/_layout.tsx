@@ -1,3 +1,4 @@
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider as RouterThemeProvider } from 'expo-router';
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
@@ -5,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { initMixpanel } from '@/lib/mixpanel';
 import { initOfflineQueue } from '@/lib/offline-queue';
+import { persistOptions, queryClient } from '@/lib/query-client';
 import { Sentry, initSentry } from '@/lib/sentry';
 import { ThemeProvider, useTheme } from '@/theme';
 
@@ -37,9 +39,11 @@ function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <Navigation />
-    </ThemeProvider>
+    <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
+      <ThemeProvider>
+        <Navigation />
+      </ThemeProvider>
+    </PersistQueryClientProvider>
   );
 }
 
