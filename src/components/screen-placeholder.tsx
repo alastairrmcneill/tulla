@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,8 +10,13 @@ import { useTheme } from '@/theme';
  * Placeholder (plan 1.13) — every route in the tree gets one of these until
  * its real epic/task lands. Not a shipped component; each screen task
  * replaces its own placeholder rather than building a new route.
+ *
+ * `children` is an escape hatch for the rare case where a *different* task
+ * needs a bare, real control to live on an otherwise-still-placeholder
+ * screen (e.g. 1.9's log-out button belongs on Settings, which 5.12 hasn't
+ * built yet) — not a general invitation to grow placeholders piecemeal.
  */
-export function ScreenPlaceholder({ title }: { title: string }) {
+export function ScreenPlaceholder({ title, children }: { title: string; children?: ReactNode }) {
   const { spacing } = useTheme();
   const styles = getStyles(spacing);
 
@@ -23,6 +29,7 @@ export function ScreenPlaceholder({ title }: { title: string }) {
         <ThemedText type="small" themeColor="textSecondary" style={styles.text}>
           Not built yet.
         </ThemedText>
+        {children}
       </SafeAreaView>
     </ThemedView>
   );

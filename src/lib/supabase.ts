@@ -1,3 +1,11 @@
+// Must be the first import in this file. Hermes doesn't provide a
+// spec-compliant `URL`/`URLSearchParams`, which supabase-js's internals rely
+// on -- missing this causes silent failures deep in the SDK (confirmed: with
+// this missing, session persistence never actually wrote to storage, with no
+// error surfaced anywhere). Required per Supabase's own React Native
+// quickstart, which 1.12 missed.
+import 'react-native-url-polyfill/auto';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 

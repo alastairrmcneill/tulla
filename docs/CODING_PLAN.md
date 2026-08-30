@@ -162,7 +162,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Deep link routing: confirm `tulla://auth/callback` (or whatever path is chosen) reaches Expo Router correctly via `expo-linking`; same mechanism will carry `tulla://join/[code]` for 3.10 later, so verify the general scheme-routing pattern here, not just the one auth path.
   **Done when:** a real magic-link email round-trips from send → tap → app opens to the right screen, tested on a physical device or simulator with mail access.
 
-### 1.9 — Auth flow in-app `[ ]`
+### 1.9 — Auth flow in-app `[x]` (see also: root-route session/onboarding branching, added here since 1.13 deferred it to this task)
 
 **Depends on:** 1.7, 1.8, 1.13.
 **References:** product spec screen 2 (sign up / log in), §3 step 7.
