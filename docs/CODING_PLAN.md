@@ -164,7 +164,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Verify using the Sentry MCP (per `CLAUDE.md` tools instruction — don't just assume the integration code is sufficient): trigger a test error, confirm it lands in the Sentry project via `mcp__claude_ai_Sentry__search_issues` or equivalent.
 **Done when:** a deliberately-thrown test error appears in Sentry, confirmed via the MCP, then removed from code.
 
-### 1.11 — Mixpanel `[ ]`
+### 1.11 — Mixpanel `[x]`
 **Depends on:** 1.3.
 **References:** tech plan §7 (event set, identify/alias pattern), §11.
 **Implementation:**

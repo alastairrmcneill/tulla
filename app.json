@@ -41,7 +41,8 @@
           "organization": "alastair-mcneill",
           "project": "tulla"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
