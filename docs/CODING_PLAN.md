@@ -174,7 +174,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Wire `mixpanel.alias()` into 1.9's sign-up success path.
 **Done when:** a test event appears in Mixpanel, confirmed via the Mixpanel MCP (`Get-Events`/`Run-Query`), then the anon-identify → alias round trip verified with one real sign-up.
 
-### 1.12 — Client library scaffolding `[ ]`
+### 1.12 — Client library scaffolding `[x]`
 **Depends on:** 1.5.
 **References:** tech plan §2 repo structure.
 **Implementation:** `lib/supabase.ts` (client singleton, typed via `mcp__supabase__generate_typescript_types` into `types/database.ts`), plus confirm `lib/sentry.ts` (1.10) and `lib/mixpanel.ts` (1.11) already match this structure. `lib/revenuecat.ts` and `lib/notifications.ts` are stubbed here (empty exports) so the repo structure exists ahead of Epics 4/5 filling them in.
