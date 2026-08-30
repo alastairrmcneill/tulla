@@ -3,8 +3,10 @@ import * as SplashScreen from 'expo-splash-screen';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { Sentry, initSentry } from '@/lib/sentry';
 import { ThemeProvider, useTheme } from '@/theme';
 
+initSentry();
 SplashScreen.preventAutoHideAsync();
 
 function Navigation() {
@@ -17,10 +19,12 @@ function Navigation() {
   );
 }
 
-export default function TabLayout() {
+function TabLayout() {
   return (
     <ThemeProvider>
       <Navigation />
     </ThemeProvider>
   );
 }
+
+export default Sentry.wrap(TabLayout);

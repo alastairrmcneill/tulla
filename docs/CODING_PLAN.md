@@ -153,7 +153,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 - Session persistence across app restarts (Supabase JS handles this via its storage adapter — confirm it's configured with a persistent adapter, not the in-memory default).
 **Done when:** sign-up, log-in, log-out, and session-restore-on-relaunch all work end to end against the real Supabase project.
 
-### 1.10 — Sentry `[ ]`
+### 1.10 — Sentry `[x]`
 **Depends on:** 1.3.
 **References:** tech plan §11 ("the old Flutter app had no crash reporting at all... set this up in Phase 1").
 **Implementation:**
