@@ -5,22 +5,22 @@
 - `docs/01-product-spec.md` — screens, flows, onboarding, paywall mechanics
 - `docs/02-technical-implementation-plan.md` — stack, schema, RLS, billing architecture
 - `docs/03-marketing-distribution-plan.md` — background only, not code-relevant
-- `docs/CODING_PLAN.md` — the living, section-by-section build plan for this repo. If this file doesn't exist yet, your first job is to draft it from the two spec documents above, broken into small, checkable sub-tasks under the phases already defined in the technical plan's Section 15. Confirm the draft with the user before treating it as settled.
+- `docs/CODING_PLAN.md` — thin index: epic list, current ticket, locked cross-cutting decisions. The full plan lives one file per epic under `docs/plan/epic-N.md`; completed epics are recorded in `docs/HISTORY.md`.
 
 ## Workflow — how to work through this project
 
 This is a solo, part-time project (10–15 hrs/week), built across many short, separate sessions. Because of that:
 
-1. **Start every session by reading `docs/CODING_PLAN.md`** to see what's in progress and what's next. Don't assume you remember — check.
-2. **Work one section of the plan at a time.** Don't jump ahead to a later section without finishing, or explicitly deferring, the current one.
+1. **Start every session by reading `docs/CODING_PLAN.md`, then only the current epic's `docs/plan/epic-N.md`** to see what's in progress and what's next. Don't assume you remember — check. Don't read other epic files or `HISTORY.md` unless a ticket's own spec sends you there.
+2. **Work one ticket of the current epic at a time.** Don't jump ahead to a later ticket, or a later epic, without finishing, or explicitly deferring, the current one.
 3. **Before writing any code for a new section**, restate your understanding of what it requires and flag anything ambiguous or underspecified against the two spec documents. Wait for explicit confirmation before implementing — use Plan Mode for this step where it helps.
 4. **After implementing a section, stop.** Summarize what changed, show the diff, and wait for explicit approval before running `git commit`. Never commit automatically, even if the change seems small or obviously correct.
-5. **After approval**, commit with a message referencing the plan section, update that section's status in `docs/CODING_PLAN.md`, then stop and wait before starting the next section.
+5. **After approval**, commit with a message referencing the ticket number, tick its status in the current `docs/plan/epic-N.md`, update `docs/CODING_PLAN.md`'s "Next up" line, then stop and wait before starting the next ticket. When an epic's last ticket lands, move its section from the epic file into `docs/HISTORY.md` and drop the epic file's status in the index to done.
 
 ## Design fidelity
 
 - Never hardcode colors, spacing, type sizes, or corner radii. Pull everything from the shared design-token/theme file (technical plan, Section 9) — if it doesn't exist yet, that's an early Phase 1 task, not something to improvise per-screen.
-- Reference the actual exported screens in `/design/` for any UI work. If the relevant screen is missing, ask for it rather than guessing the layout from the product spec's text description alone.
+- Reference the actual exported screens in `design-reference/` (repo root) for any UI work. If the relevant screen is missing, ask for it rather than guessing the layout from the product spec's text description alone.
 - iOS-specific chrome (tab bar, sheets, floating action button) uses Liquid Glass via platform-specific `.ios.tsx` files. Android-specific chrome uses Material 3 via `.android.tsx` files. Everything else stays shared — don't fork components that don't need forking. See technical plan, Section 9.
 
 ## Tools
