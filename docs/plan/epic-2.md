@@ -16,7 +16,7 @@ Built early, on purpose: every screen ticket in Epics 3–6 depends on the patte
 **Done when — machine-checkable:** a manual test calling `enqueue()` with the network mocked off shows the local write committed to `AsyncStorage` before the mocked network call fires.
 **Done when — device-checkable:** submitting through a real consumer screen in airplane mode succeeds locally immediately and syncs once connectivity returns (batch this check with 3.4/3.6/3.7's own device checks, one pass).
 
-### 2.2 — Shared data-fetching hook `[ ]`
+### 2.2 — Shared data-fetching hook `[x]`
 
 **Depends on:** 1.12.
 **References:** resolves the cross-cutting "cached-last-known-state + retry on every read screen" requirement (product spec §14) once, instead of an end-of-project audit.
