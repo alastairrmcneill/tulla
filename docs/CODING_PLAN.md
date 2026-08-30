@@ -180,7 +180,7 @@ Nothing in Epics 2–5 can start for real until this epic's data/auth/observabil
 **Implementation:** `lib/supabase.ts` (client singleton, typed via `mcp__supabase__generate_typescript_types` into `types/database.ts`), plus confirm `lib/sentry.ts` (1.10) and `lib/mixpanel.ts` (1.11) already match this structure. `lib/revenuecat.ts` and `lib/notifications.ts` are stubbed here (empty exports) so the repo structure exists ahead of Epics 4/5 filling them in.
 **Done when:** `types/database.ts` generated and imported by `lib/supabase.ts`'s typed client; no `any` on query results for the tables from 1.6.
 
-### 1.13 — Navigation scaffold `[ ]`
+### 1.13 — Navigation scaffold `[x]`
 **Depends on:** 1.2.
 **References:** tech plan §2's full route tree; product spec §4 (tab structure), §5 (screen inventory — use this to confirm every route below has a home).
 **Implementation:**

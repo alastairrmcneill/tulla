@@ -1,9 +1,8 @@
-import { DarkTheme, DefaultTheme, ThemeProvider as RouterThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider as RouterThemeProvider } from 'expo-router';
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
 import { initMixpanel } from '@/lib/mixpanel';
 import { Sentry, initSentry } from '@/lib/sentry';
 import { ThemeProvider, useTheme } from '@/theme';
@@ -16,12 +15,21 @@ function Navigation() {
   return (
     <RouterThemeProvider value={mode === 'dark' ? DarkTheme : DefaultTheme}>
       <AnimatedSplashOverlay />
-      <AppTabs />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="team" options={{ headerShown: false }} />
+        <Stack.Screen name="join/[code]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="notifications" />
+        <Stack.Screen name="log-session" options={{ presentation: 'modal' }} />
+      </Stack>
     </RouterThemeProvider>
   );
 }
 
-function TabLayout() {
+function RootLayout() {
   useEffect(() => {
     initMixpanel();
   }, []);
@@ -33,4 +41,4 @@ function TabLayout() {
   );
 }
 
-export default Sentry.wrap(TabLayout);
+export default Sentry.wrap(RootLayout);
