@@ -2,7 +2,7 @@
 
 Built early, on purpose: every screen ticket in Epics 3–6 depends on the patterns here (offline write queue, cached reads, push) existing already, so no screen ships a stub or gets a second pass later.
 
-### 2.1 — Offline-first write queue `[ ]`
+### 2.1 — Offline-first write queue `[x]`
 
 **Depends on:** 1.6.
 **References:** product spec §13.

@@ -29,7 +29,7 @@
 | 8 | [Pilot Distribution](plan/epic-8.md) | not started |
 | 9 | [Public Release](plan/epic-9.md) | not started |
 
-**Next up:** Epic 2, ticket 2.1.
+**Next up:** Epic 2, ticket 2.2.
 
 ## Locked technical decisions (quick reference — full detail lives in the owning ticket)
 
