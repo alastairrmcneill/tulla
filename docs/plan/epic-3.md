@@ -68,14 +68,14 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 **Done when — machine-checkable:** submit is blocked until all core questions answered; `wellness_score` computed correctly against known fixture inputs; picking soreness 1 or 2 opens the body-map sheet, picking 3+ does not.
 **Done when — device-checkable:** a full check-in submits offline and online; a screen-reader user completes the entire form using only VoiceOver/TalkBack.
 
-### 3.5 — "Done for today" state `[ ]`
+### 3.5 — "Done for today" state `[x]`
 
 **Depends on:** 3.2, 3.4.
 **References:** product spec §6.1.
 **Spec:** replaces the check-in form on the Today tab once a `daily_checkins` row exists for this profile for today (query via 2.2's hook) — today's values plotted against `athlete_baseline_14` via 3.2's `RadarChart`.
 **Done when — machine-checkable:** re-opening the Today tab after submitting shows this state, not the form, for the rest of that calendar day (verified by querying with a mocked/advanced date across the midnight boundary).
 
-### 3.6 — Body map screen wiring `[ ]`
+### 3.6 — Body map screen wiring `[x]`
 
 **Depends on:** 3.3, 3.4.
 **References:** product spec §6.2 (both trigger paths).
