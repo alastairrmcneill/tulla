@@ -1,6 +1,3 @@
-// Generated via `mcp__supabase__generate_typescript_types` (plan 1.12).
-// Do not hand-edit — regenerate after every schema migration instead.
-
 export type Json =
   | string
   | number
@@ -397,7 +394,41 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      athlete_baseline_14: {
+        Args: { p_as_of?: string; p_profile_id: string }
+        Returns: {
+          coverage: number
+          mean: number
+          metric: string
+          sd: number
+          sufficient: boolean
+        }[]
+      }
+      athlete_baseline_28: {
+        Args: { p_as_of?: string; p_profile_id: string }
+        Returns: {
+          coverage: number
+          mean: number
+          metric: string
+          sd: number
+          sufficient: boolean
+        }[]
+      }
+      rolling_baseline: {
+        Args: {
+          p_as_of?: string
+          p_metric: string
+          p_min_coverage: number
+          p_profile_id: string
+          p_window_days: number
+        }
+        Returns: {
+          coverage: number
+          mean: number
+          sd: number
+          sufficient: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
