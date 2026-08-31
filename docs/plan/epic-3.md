@@ -20,7 +20,7 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 
 **Done when — machine-checkable:** seeded profile with 20+ days of check-ins returns correct `mean`/`sd`/`coverage`/`sufficient` from `athlete_baseline_14`; a profile with <10 days in the trailing 14 returns `sufficient=false` and null `mean`/`sd`; seeding 14 identical values confirms `sd=0.5` (floor), not `0`.
 
-### 3.2 — Radar chart component `[ ]`
+### 3.2 — Radar chart component `[x]`
 
 **Depends on:** 0.1, 3.1.
 **References:** tech plan §10 (custom `react-native-svg` build, no library support for polar/radar charts); `design-reference/Wellness App.dc.html`'s `onPreview` block for exact geometry/style reference.
