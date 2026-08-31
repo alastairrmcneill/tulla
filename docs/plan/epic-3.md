@@ -34,7 +34,7 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 **Done when — machine-checkable:** renders correctly with fixture data at both phone and tablet widths, including the insufficient-baseline fixture case.
 **Done when — device-checkable:** a VoiceOver pass reads out real per-axis values, not just "image."
 
-### 3.3 — Body map SVG component `[ ]`
+### 3.3 — Body map SVG component `[x]`
 
 **Depends on:** 0.1.
 **References:** tech plan §10 (custom SVG, no off-the-shelf package); product spec §6.2.
