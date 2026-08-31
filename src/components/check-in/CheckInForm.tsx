@@ -4,6 +4,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { BodyMap } from '@/components/charts/BodyMap';
 import type { Metric } from '@/components/charts/RadarChart';
+import { SyncIndicator } from '@/components/sync-indicator';
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/hooks/use-auth';
 import { localDateString } from '@/lib/date';
@@ -104,6 +105,7 @@ export function CheckInForm() {
   return (
     <Fragment>
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <SyncIndicator />
       <ThemedText type="title" style={styles.heading}>
         How are you feeling?
       </ThemedText>
