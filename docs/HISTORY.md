@@ -63,3 +63,16 @@ Route groups per tech plan §2, placeholder screens for the full 20-screen inven
 
 ### 1.14 — CI pipeline `[x]`
 `.github/workflows/ci.yml` — `npm ci`, `tsc --noEmit`, `npm run lint` on every PR. `eslint.config.js` committed ahead of wiring CI.
+
+---
+
+## Epic 2 — Shared Data & Notification Infrastructure
+
+### 2.1 — Offline-first write queue `[x]`
+`lib/offline-queue.ts`: `enqueue(kind, payload)`, one `AsyncStorage` key per item (client-generated UUID, `@tulla/offline-queue/` prefix), local write commits before any network attempt. Background sync on enqueue, `NetInfo` reconnect, and app open. 3 attempts, 2s/10s/60s backoff (in-memory per sync cycle, not persisted — a fresh cycle starts on next app open/reconnect); final failure logs to Sentry, item stays queued. Upserts on `id` (client-generated) even for the two append-only kinds, so a retry after a lost-ack success can't duplicate a row; `daily_checkins` upserts on `profile_id,date` (its real unique constraint) for correct same-day last-write-wins. `useSyncStatus()` + `<SyncIndicator/>`. `@react-native-community/netinfo` added.
+
+### 2.2 — Shared data-fetching hook `[x]`
+`lib/query-client.ts`: `QueryClient` (`retry: 2`, `gcTime` 24h) + `AsyncStorage` persister (`maxAge` 24h), wraps app root in `<PersistQueryClientProvider>`. `<RetryBanner/>`: renders only when a query is erroring with no cached data; stays hidden on stale-but-cached renders. `@tanstack/react-query` + persist-client + async-storage-persister added. Binding rule for every later read screen: `useQuery` against this client, not a raw `useEffect` + fetch.
+
+### 2.3 — Push notification infra + in-app inbox `[x]`
+`profiles.expo_push_token` column added. `notifications` has no client insert policy by design (service-role only), so the real `sendPush()` logic lives server-side: `supabase/functions/_shared/send-push.ts` (insert notifications row unconditionally, call Expo's push API if a token exists, check the per-ticket status in the response body — Expo returns HTTP 200 even on a per-token delivery failure) deployed as the `send-push` Edge Function (`verify_jwt: true`; known gap — authorizes on "signed in", not on any relationship to the target profile, left for 4.5's actual UI to close). `lib/notifications.ts` (fills 1.12's stub): `registerForPushNotificationsAsync()` + `sendPush()` as a thin `functions.invoke()` wrapper. Real inbox screen at `app/notifications.tsx` (screen 19): `useQuery` list via 2.2, mark-read on open, `<RetryBanner/>`. `expo-notifications` added + `app.json` plugin entry. Device-verified end to end on a physical iOS device, including generating APNs push credentials via `eas credentials` (a local build never provisions these; only EAS Build does) — a first local build without them produced a confirmed `InvalidCredentials` failure, silently reported as success until the per-ticket-status check above was added.

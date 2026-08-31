@@ -20,7 +20,7 @@
 |---|------|--------|
 | 0 | Design System & Theme Foundation | done — [`HISTORY.md`](HISTORY.md) |
 | 1 | Foundation | done — [`HISTORY.md`](HISTORY.md) |
-| 2 | [Shared Data & Notification Infrastructure](plan/epic-2.md) | not started |
+| 2 | Shared Data & Notification Infrastructure | done — [`HISTORY.md`](HISTORY.md) |
 | 3 | [Athlete Core](plan/epic-3.md) | not started |
 | 4 | [Teams & Coaching](plan/epic-4.md) | not started |
 | 5 | [Billing & Subscriptions](plan/epic-5.md) | not started |
@@ -29,7 +29,7 @@
 | 8 | [Pilot Distribution](plan/epic-8.md) | not started |
 | 9 | [Public Release](plan/epic-9.md) | not started |
 
-**Next up:** Epic 2, ticket 2.3.
+**Next up:** Epic 3, ticket 3.1.
 
 ## Locked technical decisions (quick reference — full detail lives in the owning ticket)
 
