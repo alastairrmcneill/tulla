@@ -2,7 +2,7 @@
 
 The free, no-team-required side of the product. Product spec §1: individual tracking is free forever — nothing here gates behind `has_coach_access()`.
 
-### 3.1 — Personal baseline computation `[ ]`
+### 3.1 — Personal baseline computation `[x]`
 
 **Depends on:** 1.6.
 **References:** product spec §6.1, §6.4; tech plan §3 ("flagged list is computed, not stored" — same principle applies here).
