@@ -11,3 +11,11 @@ export function localDateString(date: Date = new Date()): string {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+/** "WED 26 AUG" — the all-caps date kicker used above the Today tab's headline (design-reference). Built manually rather than via `toLocaleDateString` so the format doesn't drift by locale/engine. */
+export function formatDateKicker(date: Date = new Date()): string {
+  return `${WEEKDAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}`;
+}

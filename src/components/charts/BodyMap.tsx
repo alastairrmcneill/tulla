@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Svg, { Circle, Rect } from 'react-native-svg';
 
 import { ThemedText } from '@/components/themed-text';
@@ -180,10 +180,17 @@ export function BodyMap({ onEntrySaved }: BodyMapProps) {
         </Svg>
       </View>
 
-      <Modal visible={activeRegion !== null} transparent animationType="slide" onRequestClose={closeSheet}>
-        <Pressable style={styles.scrim} onPress={closeSheet} accessibilityLabel="Close" accessibilityRole="button" />
-        <View style={styles.sheet}>
-          <ThemedText type="title">{activeRegion?.label}</ThemedText>
+      {/* Inline expanding panel below the figure, matching design-reference exactly — not a second sheet stacked over 3.6's BodyMapSheet, which already hosts this whole component. */}
+      {activeRegion && (
+        <View style={styles.inlinePanel}>
+          <View style={styles.inlinePanelHeader}>
+            <ThemedText type="subtitle">{activeRegion.label} — how bad?</ThemedText>
+            <Pressable onPress={closeSheet} accessibilityRole="button" accessibilityLabel="Close" hitSlop={12}>
+              <ThemedText type="smallBold" themeColor="textTertiary">
+                ✕
+              </ThemedText>
+            </Pressable>
+          </View>
 
           <View style={styles.severityRow}>
             {SEVERITIES.map((s) => (
@@ -222,7 +229,7 @@ export function BodyMap({ onEntrySaved }: BodyMapProps) {
             </ThemedText>
           </Pressable>
         </View>
-      </Modal>
+      )}
     </View>
   );
 }
@@ -252,16 +259,20 @@ function getStyles({ colors, spacing, radius, typography, layout, opacity }: Pic
       aspectRatio: VIEWBOX_WIDTH / VIEWBOX_HEIGHT,
       marginTop: spacing.lg,
     },
-    scrim: {
-      flex: 1,
-      backgroundColor: colors.scrim,
-    },
-    sheet: {
+    inlinePanel: {
+      marginTop: spacing.lg,
       backgroundColor: colors.surfaceElevated,
-      borderTopLeftRadius: radius.extraLarge3,
-      borderTopRightRadius: radius.extraLarge3,
-      padding: spacing.xl,
-      gap: spacing.lg,
+      borderRadius: radius.extraLarge2,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: spacing.lg,
+      gap: spacing.md,
+    },
+    inlinePanelHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: spacing.sm,
     },
     severityRow: {
       flexDirection: 'row',

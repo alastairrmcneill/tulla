@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { BodyMap } from '@/components/charts/BodyMap';
 import { ThemedText } from '@/components/themed-text';
@@ -29,10 +29,12 @@ export function BodyMapSheet({ visible, onClose }: { visible: boolean; onClose: 
             </ThemedText>
           </Pressable>
         </View>
-        <ThemedText type="small" themeColor="textSecondary">
-          Tap anywhere it&rsquo;s sore. One tap is enough — the rest is optional.
-        </ThemedText>
-        <BodyMap />
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <ThemedText type="small" themeColor="textSecondary">
+            Tap anywhere it&rsquo;s sore. One tap is enough — the rest is optional.
+          </ThemedText>
+          <BodyMap />
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -49,7 +51,6 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       borderTopLeftRadius: radius.extraLarge3,
       borderTopRightRadius: radius.extraLarge3,
       padding: spacing.xl,
-      paddingBottom: spacing.xl + layout.tabBarHeight,
       gap: spacing.md,
       maxHeight: '85%',
     },
@@ -58,6 +59,10 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: spacing.sm,
+    },
+    scrollContent: {
+      gap: spacing.md,
+      paddingBottom: spacing.xl + layout.tabBarHeight,
     },
   });
 }

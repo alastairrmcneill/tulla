@@ -5,8 +5,9 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import type { Metric } from '@/components/charts/RadarChart';
 import { RadarChart } from '@/components/charts/RadarChart';
 import { RetryBanner } from '@/components/retry-banner';
-import { SyncIndicator } from '@/components/sync-indicator';
 import { ThemedText } from '@/components/themed-text';
+import { useSyncStatus } from '@/hooks/use-sync-status';
+import { formatDateKicker } from '@/lib/date';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/theme';
 import type { Tables } from '@/types/database';
@@ -23,6 +24,7 @@ export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> })
   const { colors, spacing, radius, layout } = useTheme();
   const router = useRouter();
   const styles = getStyles({ colors, spacing, radius, layout });
+  const { pendingCount } = useSyncStatus();
 
   const baselineQuery = useQuery({
     queryKey: ['athlete_baseline_14', checkin.profile_id, checkin.date],
@@ -50,11 +52,25 @@ export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> })
   const baselineByMetric = new Map(baselineQuery.data?.map((row) => [row.metric, row.mean]));
   const baseline: Record<Metric, number | null> = Object.fromEntries(METRICS.map((m) => [m, baselineByMetric.get(m) ?? null])) as Record<Metric, number | null>;
 
+  // "Below usual" is a real baseline comparison (current < that metric's
+  // athlete_baseline_14 mean), not the design-reference demo's raw <=2
+  // threshold — only counted where a sufficient baseline actually exists.
+  const sufficientMetrics = METRICS.filter((m) => baseline[m] !== null);
+  const belowUsualCount = sufficientMetrics.filter((m) => current[m] < (baseline[m] as number)).length;
+  const summary = sufficientMetrics.length === 0 ? null : belowUsualCount > 0 ? `${belowUsualCount} area${belowUsualCount === 1 ? '' : 's'} below your usual — an easy warm-up is the smart call.` : 'Everything at or above your usual. Good day to push.';
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <SyncIndicator />
+      <ThemedText type="smallBold" themeColor="accentText" style={styles.kicker}>
+        {formatDateKicker()}
+      </ThemedText>
+      <ThemedText type="title">You&rsquo;re done</ThemedText>
 
-      <ThemedText type="title">You&rsquo;re done for today</ThemedText>
+      <View style={styles.savedPill}>
+        <ThemedText type="smallBold" themeColor="accentText">
+          SAVED ON DEVICE{pendingCount > 0 ? ' · SYNCING' : ''}
+        </ThemedText>
+      </View>
 
       <RetryBanner query={baselineQuery} onRetry={() => baselineQuery.refetch()} />
 
@@ -68,6 +84,11 @@ export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> })
           </ThemedText>
         </View>
         <RadarChart current={current} baseline={baseline} />
+        {summary && (
+          <ThemedText type="small" themeColor="textSecondary" style={styles.summary}>
+            {summary}
+          </ThemedText>
+        )}
       </View>
 
       <Pressable onPress={() => router.push('/history')} accessibilityRole="button" style={styles.historyButton}>
@@ -88,7 +109,18 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       paddingHorizontal: layout.screenHorizontal,
       paddingTop: layout.screenTop,
       paddingBottom: layout.screenBottom + layout.tabBarHeight,
-      gap: spacing.lg,
+      gap: spacing.md,
+    },
+    kicker: {
+      letterSpacing: 1.4,
+    },
+    savedPill: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.xs,
+      borderRadius: radius.full,
+      backgroundColor: colors.accentSurface,
+      marginBottom: spacing.sm,
     },
     card: {
       borderRadius: radius.extraLarge2,
@@ -97,6 +129,7 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       borderWidth: 1,
       borderColor: colors.border,
       gap: spacing.md,
+      marginTop: spacing.sm,
     },
     cardHeader: {
       flexDirection: 'row',
@@ -105,6 +138,11 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
     },
     cardLabel: {
       letterSpacing: 1.2,
+    },
+    summary: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingTop: spacing.md,
     },
     historyButton: {
       minHeight: layout.minTouchTarget,
@@ -115,6 +153,7 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: spacing.lg,
+      marginTop: spacing.sm,
     },
   });
 }

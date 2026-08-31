@@ -6,7 +6,7 @@ import type { Metric } from '@/components/charts/RadarChart';
 import { SyncIndicator } from '@/components/sync-indicator';
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/hooks/use-auth';
-import { localDateString } from '@/lib/date';
+import { formatDateKicker, localDateString } from '@/lib/date';
 import { enqueue } from '@/lib/offline-queue';
 import { queryClient } from '@/lib/query-client';
 import { useTheme } from '@/theme';
@@ -108,11 +108,14 @@ export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
     <Fragment>
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <SyncIndicator />
+      <ThemedText type="smallBold" themeColor="accentText" style={styles.kicker}>
+        {formatDateKicker()}
+      </ThemedText>
       <ThemedText type="title" style={styles.heading}>
         How are you feeling?
       </ThemedText>
       <ThemedText type="small" themeColor="textSecondary" style={styles.subheading}>
-        Five taps.
+        Five taps. Tap ⓘ on any row if you want the wording.
       </ThemedText>
 
       {QUESTIONS.map((q) => {
@@ -188,19 +191,22 @@ export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
           })}
         </View>
       </View>
-
-      <Pressable
-        onPress={handleSubmit}
-        disabled={!canSubmit || submitting}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: !canSubmit || submitting }}
-        style={[styles.submitButton, (!canSubmit || submitting) && styles.submitButtonDisabled]}
-      >
-        <ThemedText type="smallBold" themeColor={canSubmit ? 'onAccent' : 'textDisabled'}>
-          {submitting ? 'SUBMITTING…' : canSubmit ? 'SUBMIT CHECK-IN' : `${unansweredCount} TO GO`}
-        </ThemedText>
-      </Pressable>
       </ScrollView>
+
+      {/* Floating over the scroll content, not part of its flow — matches design-reference exactly (the submit pill sits fixed above the tab bar while the form scrolls underneath it). */}
+      <View style={styles.submitBar} pointerEvents="box-none">
+        <Pressable
+          onPress={handleSubmit}
+          disabled={!canSubmit || submitting}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !canSubmit || submitting }}
+          style={[styles.submitButton, (!canSubmit || submitting) && styles.submitButtonDisabled]}
+        >
+          <ThemedText type="smallBold" themeColor={canSubmit ? 'onAccent' : 'textDisabled'}>
+            {submitting ? 'SUBMITTING…' : canSubmit ? 'SUBMIT CHECK-IN' : `${unansweredCount} TO GO`}
+          </ThemedText>
+        </Pressable>
+      </View>
 
       <Modal visible={infoQuestion !== null} transparent animationType="slide" onRequestClose={() => setInfoFor(null)}>
         <Pressable style={styles.scrim} onPress={() => setInfoFor(null)} accessibilityLabel="Close" accessibilityRole="button" />
@@ -245,19 +251,20 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
       alignSelf: 'center',
       paddingHorizontal: layout.screenHorizontal,
       paddingTop: layout.screenTop,
-      // Clears the floating tab bar, which overlays content rather than
-      // reserving its own layout space (NativeTabs, 1.13) — SafeAreaView only
-      // reserves the top edge here (see today/index.tsx), so this screen has
-      // to account for the tab bar itself.
-      paddingBottom: layout.screenBottom + layout.tabBarHeight,
+      // Clears the floating tab bar AND the floating submit bar above it —
+      // neither reserves its own layout space (NativeTabs, 1.13; submitBar
+      // below), so this screen accounts for both itself.
+      paddingBottom: layout.screenBottom + layout.tabBarHeight + layout.minTouchTarget + spacing.lg,
       gap: spacing['2xl'],
+    },
+    kicker: {
+      letterSpacing: 1.4,
+      marginBottom: -spacing.lg,
     },
     heading: {
       marginBottom: spacing.xs,
     },
-    subheading: {
-      marginTop: -spacing.lg,
-    },
+    subheading: {},
     block: {
       gap: spacing.md,
     },
@@ -309,6 +316,11 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
     tileSelected: {
       backgroundColor: colors.accent,
       borderColor: colors.accent,
+      shadowColor: colors.shadowColorAccent,
+      shadowOpacity: 1,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 6,
     },
     availabilityRow: {
       flexDirection: 'row',
@@ -330,6 +342,16 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
       borderColor: colors.accent,
       borderWidth: 1.5,
     },
+    submitBar: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: layout.tabBarHeight + spacing.lg,
+      paddingHorizontal: layout.screenHorizontal,
+      width: '100%',
+      maxWidth: layout.maxContentWidth,
+      alignSelf: 'center',
+    },
     submitButton: {
       minHeight: layout.minTouchTarget,
       paddingVertical: spacing.lg,
@@ -337,6 +359,11 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
       backgroundColor: colors.accent,
       alignItems: 'center',
       justifyContent: 'center',
+      shadowColor: colors.shadowColorAccent,
+      shadowOpacity: 1,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 8,
     },
     submitButtonDisabled: {
       backgroundColor: colors.surfaceDisabled,

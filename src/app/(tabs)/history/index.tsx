@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useMemo } from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { Calendar, type DateData } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -163,21 +164,24 @@ export default function HistoryScreen() {
     if (!date) return <View />;
     const score = scoreByDate.get(date.dateString);
     const tier = classifyWellnessScore(score);
-    const tierColors = tier ? colors.status[tier === 'low' ? 'danger' : tier === 'mid' ? 'warning' : 'success'] : null;
+    // Solid icon-colour fill (not the translucent surface tint) — closer to
+    // design-reference's vivid filled cells, still paired with a glyph so
+    // it's never colour alone.
+    const tierIcon = tier ? colors.status[tier === 'low' ? 'danger' : tier === 'mid' ? 'warning' : 'success'].icon : null;
     const glyph = tier === 'low' ? '▼' : tier === 'mid' ? '–' : tier === 'high' ? '▲' : '';
     const tierLabel = tier === 'low' ? 'below usual' : tier === 'mid' ? 'around usual' : tier === 'high' ? 'above usual' : 'no check-in';
 
     return (
       <View
-        style={[styles.dayCell, tierColors && { backgroundColor: tierColors.surface, borderColor: tierColors.border }]}
+        style={[styles.dayCell, tierIcon && { backgroundColor: tierIcon }]}
         accessible
         accessibilityLabel={`${formatShortDate(date.dateString)}, ${tierLabel}${score !== undefined && score !== null ? `, wellness score ${Math.round(score)}` : ''}`}
       >
-        <ThemedText type="small" themeColor={tierColors ? undefined : 'textTertiary'} style={tierColors && { color: tierColors.text }}>
+        <ThemedText type="small" themeColor={tierIcon ? undefined : 'textTertiary'} style={tierIcon && styles.dayNumberOnTier}>
           {date.day}
         </ThemedText>
         {glyph !== '' && (
-          <ThemedText style={[styles.dayGlyph, { color: tierColors!.text }]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <ThemedText style={styles.dayGlyph} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             {glyph}
           </ThemedText>
         )}
@@ -190,7 +194,7 @@ export default function HistoryScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <RetryBanner query={checkinsQuery} onRetry={() => checkinsQuery.refetch()} />
 
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
           <ThemedText type="title" style={styles.heading}>
             History
           </ThemedText>
@@ -273,21 +277,41 @@ export default function HistoryScreen() {
                   }}
                   style={styles.calendar}
                 />
+
+                <View style={styles.legendGradientRow}>
+                  <ThemedText type="small" themeColor="textTertiary" style={styles.legendGradientLabel}>
+                    BELOW
+                  </ThemedText>
+                  <LinearGradient
+                    colors={[colors.status.danger.icon, colors.status.warning.icon, colors.status.success.icon]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.legendGradientBar}
+                  />
+                  <ThemedText type="small" themeColor="textTertiary" style={styles.legendGradientLabel}>
+                    ABOVE
+                  </ThemedText>
+                </View>
               </View>
 
               {loadTrend && (
-                <View style={styles.card}>
-                  <ThemedText type="subtitle">
-                    Training load this week: {loadTrend.direction === 'up' ? '↑' : loadTrend.direction === 'down' ? '↓' : '→'}
-                  </ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {loadTrend.thisWeek} vs {loadTrend.lastWeek} last week (summed RPE)
-                  </ThemedText>
+                <View style={[styles.card, styles.loadCard]}>
+                  <View style={[styles.loadIconChip, { backgroundColor: colors.accentSurface }]}>
+                    <ThemedText type="title" themeColor="accentText">
+                      {loadTrend.direction === 'up' ? '↑' : loadTrend.direction === 'down' ? '↓' : '→'}
+                    </ThemedText>
+                  </View>
+                  <View style={styles.loadCardText}>
+                    <ThemedText type="subtitle">Load this week: {loadTrend.direction}</ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {loadTrend.thisWeek} vs {loadTrend.lastWeek} last week (summed RPE)
+                    </ThemedText>
+                  </View>
                 </View>
               )}
             </>
           )}
-        </View>
+        </ScrollView>
       </SafeAreaView>
 
       <LogSessionFab />
@@ -304,7 +328,7 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       flex: 1,
     },
     content: {
-      flex: 1,
+      flexGrow: 1,
       width: '100%',
       maxWidth: layout.maxContentWidth,
       alignSelf: 'center',
@@ -365,18 +389,50 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
     calendar: {
       borderRadius: radius.large,
     },
+    legendGradientRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      marginTop: spacing.sm,
+    },
+    legendGradientLabel: {
+      letterSpacing: 1,
+    },
+    legendGradientBar: {
+      flex: 1,
+      height: 6,
+      borderRadius: radius.extraSmall,
+    },
+    loadCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    loadIconChip: {
+      width: 46,
+      height: 46,
+      borderRadius: radius.medium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    loadCardText: {
+      flex: 1,
+      gap: spacing.xxs,
+    },
     dayCell: {
       width: 32,
       height: 32,
       borderRadius: radius.small,
       alignItems: 'center',
       justifyContent: 'center',
-      borderWidth: 1,
-      borderColor: 'transparent',
+    },
+    dayNumberOnTier: {
+      color: colors.onAccent,
     },
     dayGlyph: {
       fontSize: 8,
       lineHeight: 9,
+      color: colors.onAccent,
     },
   });
 }
