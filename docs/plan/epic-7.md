@@ -4,7 +4,11 @@
 
 **Depends on:** 1.4.
 **References:** tech plan §9, §11.
-**Spec:** real `expo-glass-effect` treatment (beyond 1.4's throwaway smoke test) on: tab bar, sheets/modals (5.3's lockout screen, 6.7's paywall, 3.3's severity picker, 3.7's RPE sheet), floating action button (3.7). Every surface gets its defined fallback (0.2's `colors.glass.*.fallbackBackground`) for iOS <26 and Reduce Transparency — verify each surface individually.
+**Spec:** real `expo-glass-effect` treatment (beyond 1.4's throwaway smoke test) on: tab bar, sheets/modals (5.3's lockout screen, 6.7's paywall, 3.3's severity picker, 3.7's RPE sheet). Every surface gets its defined fallback (0.2's `colors.glass.*.fallbackBackground`) for iOS <26 and Reduce Transparency — verify each surface individually.
+
+- **3.7's FAB is not just a glass-wrapped floating circle — dock it into the tab bar instead.** Confirmed while building 3.7: `expo-router@57.0.17`'s `expo-router/unstable-native-tabs` (already used by `(tabs)/_layout.tsx`) exports `NativeTabs.BottomAccessory`, a direct wrapper on Apple's iOS 26 `UITabBarController.bottomAccessory` — the actual current standard for a persistent tab-bar-attached action (this is how Apple Music's mini-player sits above its own tab bar: same glass surface, not a separate floating element). Real scope beyond a glass reskin: the accessory is declared once at the `<NativeTabs>` root (sibling of the `Trigger`s), so hiding it on Teams/Settings needs its own visibility logic (route-aware, e.g. via `usePathname()`); it renders in one of two placement modes (`regular`/`inline`, via `usePlacement()`) that may need different content; and it's iOS 26+ only, so pre-26 devices need a fallback — today's plain floating button is exactly that fallback, not something to throw away.
+
+
 **Done when — device-checkable:** every listed surface renders glass correctly on iOS 26, and falls back correctly (not broken/transparent) on iOS <26 and with Reduce Transparency enabled.
 
 ### 7.2 — Android Material 3 pass `[ ]`
