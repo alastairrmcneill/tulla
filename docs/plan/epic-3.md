@@ -49,7 +49,7 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 **Done when — machine-checkable:** every defined region is tappable, opens the severity picker, and a confirm writes a `body_map_entries` row with the correct `location` value.
 **Done when — device-checkable:** a screen-reader pass can identify and select a region without sighted tapping.
 
-### 3.4 — Daily check-in screen (Today tab) `[ ]`
+### 3.4 — Daily check-in screen (Today tab) `[x]`
 
 **Depends on:** 1.13, 2.1.
 **References:** product spec §6.1 in full; `design-reference` `onQuiz`-adjacent scale-picker visual style (reuse it, don't invent a second pattern).
@@ -60,10 +60,12 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 - No custom-questions section in this ticket — that slot is added directly onto this screen in 4.8, once a real team + custom questions exist to render, instead of shipping an empty placeholder now.
 - Submit disabled until all five core scales + availability are answered.
 - `wellness_score`: average of the five 1–5 metrics, normalized to 0–100 via `(avg - 1) / 4 * 100`.
-- On submit: write via 2.1's offline queue. If `muscle_soreness <= 2`, route to body-map screen (3.6) before the done state (3.5); otherwise straight to 3.5.
+- Picking `muscle_soreness` 1 or 2 — the value itself, not the eventual submit — opens 3.3's `BodyMap` in a bottom sheet over this same screen (revised from product spec §6.2's literal "immediately show the body map screen": the user's call, confirmed during 3.4 — a same-screen sheet, not a separate route, so the athlete never leaves the check-in mid-flow). 3.6's manual "something hurts?" entry point reuses the same sheet.
+- On submit: write via 2.1's offline queue, then straight to 3.5's done state — no branch here anymore, since the body-map path is no longer submit-triggered.
 - Full VoiceOver/TalkBack labels and values on every scale/picker; minimum platform tap target size on every option.
+- Also built (design-reference fidelity, confirmed with the user): the ⓘ info button per scale row, opening a sheet with the full question + all 5 worded responses, each tappable as an alternate input path.
 
-**Done when — machine-checkable:** submit is blocked until all core questions answered; `wellness_score` computed correctly against known fixture inputs; soreness ≤2 routes to body map, soreness >2 routes to done state.
+**Done when — machine-checkable:** submit is blocked until all core questions answered; `wellness_score` computed correctly against known fixture inputs; picking soreness 1 or 2 opens the body-map sheet, picking 3+ does not.
 **Done when — device-checkable:** a full check-in submits offline and online; a screen-reader user completes the entire form using only VoiceOver/TalkBack.
 
 ### 3.5 — "Done for today" state `[ ]`
@@ -78,11 +80,11 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 **Depends on:** 3.3, 3.4.
 **References:** product spec §6.2 (both trigger paths).
 **Spec:**
-- Automatic post-submit route from 3.4 (soreness ≤2).
-- Persistent manual entry point: a small "Something hurts?" link near the top of the Today tab, reachable regardless of check-in state.
+- Automatic trigger already wired in 3.4 (picking soreness ≤2 opens the sheet directly — nothing left to do here for that path).
+- Persistent manual entry point: a small "Something hurts?" link near the top of the Today tab, reachable regardless of check-in state — opens the same bottom-sheet mechanism 3.4 built, not a route.
 - Both paths land on 3.3's component, write to `body_map_entries` identically.
 
-**Done when — machine-checkable:** both entry paths write `body_map_entries` rows with the same shape.
+**Done when — machine-checkable:** the manual entry path writes `body_map_entries` rows in the same shape as 3.4's automatic path.
 
 ### 3.7 — Log a Session (RPE) `[ ]`
 
