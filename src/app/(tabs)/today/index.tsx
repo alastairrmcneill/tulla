@@ -23,10 +23,11 @@ import type { Tables } from '@/types/database';
  * exact query key (offline-first, see that component), which is what
  * actually flips this screen, not a navigation call.
  *
- * The body-map sheet is hosted here, not inside CheckInForm, because 3.6
- * requires it reachable "regardless of check-in state" (product spec §6.2)
- * — the persistent "Something hurts?" link has to work in the done-state
- * too, not just mid-form.
+ * The body-map sheet is hosted here, not inside CheckInForm, so a future
+ * done-state entry point could reach it too — but per design-reference (the
+ * "Something hurts?" link lives only in the `notDone` block, not `isDone`),
+ * it's only shown pre-check-in, matching the mockup rather than the
+ * broader "regardless of check-in state" reading of product spec §6.2.
  */
 export default function TodayScreen() {
   const { colors, spacing, radius, layout } = useTheme();
@@ -50,20 +51,19 @@ export default function TodayScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <RetryBanner query={query} onRetry={() => query.refetch()} />
 
-        {!query.isLoading && (
-          <Pressable onPress={() => setBodyMapOpen(true)} accessibilityRole="button" style={styles.hurtsLink}>
-            <ThemedText type="small" themeColor="textSecondary">
-              Something hurts? Mark it on the body map
-            </ThemedText>
-          </Pressable>
-        )}
-
         {query.isLoading ? (
           <ActivityIndicator style={styles.loading} color={colors.accent} />
         ) : query.data ? (
           <DoneForToday checkin={query.data} />
         ) : (
-          <CheckInForm onLowSoreness={() => setBodyMapOpen(true)} />
+          <>
+            <Pressable onPress={() => setBodyMapOpen(true)} accessibilityRole="button" style={styles.hurtsLink}>
+              <ThemedText type="small" themeColor="textSecondary">
+                Something hurts? Mark it on the body map
+              </ThemedText>
+            </Pressable>
+            <CheckInForm onLowSoreness={() => setBodyMapOpen(true)} />
+          </>
         )}
       </SafeAreaView>
 
