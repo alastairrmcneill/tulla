@@ -7,7 +7,7 @@ import type { Metric } from '@/components/charts/RadarChart';
 import { RadarChart } from '@/components/charts/RadarChart';
 import { RetryBanner } from '@/components/retry-banner';
 import { ThemedText } from '@/components/themed-text';
-import { useSyncStatus } from '@/hooks/use-sync-status';
+import { useItemSyncStatus } from '@/hooks/use-item-sync-status';
 import { formatDateKicker } from '@/lib/date';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/theme';
@@ -29,7 +29,8 @@ export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> })
   // comment) — NativeTabs floats above that inset, so it's added back here.
   const tabBarClearance = layout.tabBarHeight + insets.bottom;
   const styles = getStyles({ colors, spacing, radius, layout, tabBarClearance });
-  const { pendingCount } = useSyncStatus();
+  const syncStatus = useItemSyncStatus(checkin.id);
+  const syncLabel = syncStatus === 'syncing' ? 'SYNCING' : syncStatus === 'pending' ? 'SAVED ON DEVICE' : 'SAVED';
 
   const baselineQuery = useQuery({
     queryKey: ['athlete_baseline_14', checkin.profile_id, checkin.date],
@@ -73,7 +74,7 @@ export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> })
 
       <View style={styles.savedPill}>
         <ThemedText type="smallBold" themeColor="accentText">
-          SAVED ON DEVICE{pendingCount > 0 ? ' · SYNCING' : ''}
+          {syncLabel}
         </ThemedText>
       </View>
 

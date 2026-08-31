@@ -94,6 +94,53 @@ async function refreshPendingCount() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Per-item sync status — backs useItemSyncStatus()                           */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * `pendingCount` above answers "is anything in the queue at all" (used by
+ * the generic `<SyncIndicator/>`). This answers a different question a
+ * specific screen needs: "is *this* row I just wrote actually in the DB
+ * yet, or still local?" — three real states, not the same "saved" label
+ * whether it's on-device only or confirmed synced (a UI review caught this
+ * conflation — "saved on device" read as if it meant "saved to the DB").
+ *
+ * `pending`: written locally, no sync attempt in flight right now (offline,
+ * or waiting on a retry backoff timer). `syncing`: a Supabase call is
+ * actually in flight for it right now. Absent from this map entirely means
+ * synced — either this item's upsert already succeeded and it was removed,
+ * or the id was never enqueued this session at all (e.g. a row fetched
+ * fresh from the server), which is equally "already in the DB" for a
+ * caller that only ever asks about ids it owns.
+ */
+type ItemSyncState = 'pending' | 'syncing';
+const itemStates = new Map<string, ItemSyncState>();
+const itemListeners = new Map<string, Set<() => void>>();
+
+function setItemState(id: string, state: ItemSyncState | null) {
+  if (state === null) itemStates.delete(id);
+  else itemStates.set(id, state);
+  for (const listener of itemListeners.get(id) ?? []) listener();
+}
+
+export function subscribeItemSync(id: string, listener: () => void): () => void {
+  let set = itemListeners.get(id);
+  if (!set) {
+    set = new Set();
+    itemListeners.set(id, set);
+  }
+  set.add(listener);
+  return () => {
+    set!.delete(listener);
+    if (set!.size === 0) itemListeners.delete(id);
+  };
+}
+
+export function getItemSync(id: string): ItemSyncState | 'synced' {
+  return itemStates.get(id) ?? 'synced';
+}
+
+/* -------------------------------------------------------------------------- */
 /* Storage helpers                                                            */
 /* -------------------------------------------------------------------------- */
 
@@ -119,7 +166,13 @@ async function readQueuedItems(): Promise<QueueItem[]> {
 /* Public API                                                                  */
 /* -------------------------------------------------------------------------- */
 
-export async function enqueue<K extends QueueItemKind>(kind: K, payload: QueueItemPayload<K>): Promise<void> {
+/**
+ * Returns the item's id — the same value written to the row's own `id`
+ * column (see below), so a caller that wants to track this specific
+ * submission's sync status (not just "is anything pending") can pass it
+ * straight to `useItemSyncStatus()`.
+ */
+export async function enqueue<K extends QueueItemKind>(kind: K, payload: QueueItemPayload<K>): Promise<string> {
   const item: QueueItem = {
     id: Crypto.randomUUID(),
     kind,
@@ -131,10 +184,13 @@ export async function enqueue<K extends QueueItemKind>(kind: K, payload: QueueIt
   // Local write commits before anything else — the caller's submit is done
   // the moment this resolves, regardless of network state.
   await AsyncStorage.setItem(STORAGE_PREFIX + item.id, JSON.stringify(item));
+  setItemState(item.id, 'pending');
   await refreshPendingCount();
 
   // Fire-and-forget: never block the caller on network.
   void syncItem(item);
+
+  return item.id;
 }
 
 /**
@@ -169,6 +225,8 @@ async function syncItem(item: QueueItem, attempt = 0): Promise<void> {
     retryTimers.delete(item.id);
   }
 
+  setItemState(item.id, 'syncing');
+
   const { table, conflictTarget } = KIND_CONFIG[item.kind];
   // Generic upsert across differently-shaped tables — the per-kind payload
   // type already constrains what callers can pass into `enqueue()`.
@@ -176,9 +234,14 @@ async function syncItem(item: QueueItem, attempt = 0): Promise<void> {
 
   if (!error) {
     await AsyncStorage.removeItem(STORAGE_PREFIX + item.id);
+    setItemState(item.id, null); // untracked = synced
     await refreshPendingCount();
     return;
   }
+
+  // Back to "pending" — no attempt is actually in flight while we're
+  // between retries (or out of them for this session).
+  setItemState(item.id, 'pending');
 
   const nextAttempt = attempt + 1;
 

@@ -1,4 +1,3 @@
-import * as Crypto from 'expo-crypto';
 import { Fragment, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -91,15 +90,17 @@ export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
         wellness_score: computeWellnessScore(answers),
       };
 
-      await enqueue('daily_checkin', payload);
+      const queueId = await enqueue('daily_checkin', payload);
 
       // Optimistic cache write, not invalidate+refetch: this app is
       // offline-first (2.1) — a refetch could still find nothing server-side
       // if we're offline, and the "done for today" state (3.5) has to show
-      // regardless of connectivity.
+      // regardless of connectivity. `id` is the real offline-queue id (also
+      // what actually gets written to the row) so DoneForToday can track
+      // this exact submission's sync status, not just "is anything pending".
       queryClient.setQueryData(['daily_checkin', 'today', user.id, date], {
         ...payload,
-        id: Crypto.randomUUID(),
+        id: queueId,
         created_at: new Date().toISOString(),
       });
     } finally {
