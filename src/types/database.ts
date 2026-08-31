@@ -262,18 +262,21 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          expo_push_token: string | null
           id: string
           name: string | null
           notification_time: string | null
         }
         Insert: {
           created_at?: string
+          expo_push_token?: string | null
           id: string
           name?: string | null
           notification_time?: string | null
         }
         Update: {
           created_at?: string
+          expo_push_token?: string | null
           id?: string
           name?: string | null
           notification_time?: string | null
