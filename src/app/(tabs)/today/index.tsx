@@ -7,6 +7,7 @@ import { BodyMapSheet } from '@/components/check-in/BodyMapSheet';
 import { CheckInForm } from '@/components/check-in/CheckInForm';
 import { DoneForToday } from '@/components/check-in/DoneForToday';
 import { RetryBanner } from '@/components/retry-banner';
+import { LogSessionFab } from '@/components/session/LogSessionFab';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/hooks/use-auth';
@@ -67,6 +68,7 @@ export default function TodayScreen() {
       </SafeAreaView>
 
       <BodyMapSheet visible={bodyMapOpen} onClose={() => setBodyMapOpen(false)} />
+      <LogSessionFab />
     </ThemedView>
   );
 }
