@@ -2,7 +2,6 @@ import * as Crypto from 'expo-crypto';
 import { Fragment, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { BodyMap } from '@/components/charts/BodyMap';
 import type { Metric } from '@/components/charts/RadarChart';
 import { SyncIndicator } from '@/components/sync-indicator';
 import { ThemedText } from '@/components/themed-text';
@@ -41,7 +40,12 @@ export function computeWellnessScore(answers: Answers): number {
   return ((avg - 1) / 4) * 100;
 }
 
-export function CheckInForm() {
+export type CheckInFormProps = {
+  /** Called when soreness is picked at 1 or 2 — opens 3.6's shared BodyMapSheet, hosted at the Today screen level (not here) so the done-state can reach it too. */
+  onLowSoreness: () => void;
+};
+
+export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
   const { colors, spacing, radius, layout, opacity } = useTheme();
   const { user } = useAuth();
 
@@ -50,7 +54,6 @@ export function CheckInForm() {
   const [submitting, setSubmitting] = useState(false);
   const [infoFor, setInfoFor] = useState<Metric | null>(null);
   const infoQuestion = QUESTIONS.find((q) => q.metric === infoFor) ?? null;
-  const [bodyMapOpen, setBodyMapOpen] = useState(false);
 
   const unansweredCount = QUESTIONS.filter((q) => answers[q.metric] === 0).length + (availability === 0 ? 1 : 0);
   const canSubmit = unansweredCount === 0 && !!user;
@@ -60,10 +63,9 @@ export function CheckInForm() {
     setAnswers((prev) => ({ ...prev, [metric]: next }));
     // Trigger is picking a low soreness value itself, not submitting the
     // form (product spec §6.2, refined per the user: a bottom sheet over
-    // this same screen, not a separate route push — 3.6's manual "something
-    // hurts?" entry point reuses the same sheet mechanism).
+    // this same screen, not a separate route push).
     if (metric === 'muscle_soreness' && next > 0 && next <= 2) {
-      setBodyMapOpen(true);
+      onLowSoreness();
     }
   }
 
@@ -231,24 +233,6 @@ export function CheckInForm() {
           </View>
         </View>
       </Modal>
-
-      <Modal visible={bodyMapOpen} transparent animationType="slide" onRequestClose={() => setBodyMapOpen(false)}>
-        <Pressable style={styles.scrim} onPress={() => setBodyMapOpen(false)} accessibilityLabel="Close" accessibilityRole="button" />
-        <View style={styles.bodyMapSheet}>
-          <View style={styles.bodyMapSheetHeader}>
-            <ThemedText type="title">Where does it hurt?</ThemedText>
-            <Pressable onPress={() => setBodyMapOpen(false)} accessibilityRole="button" accessibilityLabel="Done" hitSlop={12}>
-              <ThemedText type="smallBold" themeColor="accentText">
-                DONE
-              </ThemedText>
-            </Pressable>
-          </View>
-          <ThemedText type="small" themeColor="textSecondary">
-            Tap anywhere it&rsquo;s sore. One tap is enough — the rest is optional.
-          </ThemedText>
-          <BodyMap />
-        </View>
-      </Modal>
     </Fragment>
   );
 }
@@ -389,21 +373,6 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
     },
     sheetOptionText: {
       flex: 1,
-    },
-    bodyMapSheet: {
-      backgroundColor: colors.surfaceElevated,
-      borderTopLeftRadius: radius.extraLarge3,
-      borderTopRightRadius: radius.extraLarge3,
-      padding: spacing.xl,
-      paddingBottom: spacing.xl + layout.tabBarHeight,
-      gap: spacing.md,
-      maxHeight: '85%',
-    },
-    bodyMapSheetHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: spacing.sm,
     },
   });
 }
