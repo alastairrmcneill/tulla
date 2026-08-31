@@ -1,6 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import { Fragment, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Metric } from '@/components/charts/RadarChart';
 import { SyncIndicator } from '@/components/sync-indicator';
@@ -48,6 +49,10 @@ export type CheckInFormProps = {
 export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
   const { colors, spacing, radius, layout, opacity } = useTheme();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
+  // layout.tabBarHeight excludes the bottom safe-area inset (its own doc
+  // comment) — NativeTabs floats above that inset, so it's added back here.
+  const tabBarClearance = layout.tabBarHeight + insets.bottom;
 
   const [answers, setAnswers] = useState<Answers>(EMPTY_ANSWERS);
   const [availability, setAvailability] = useState<0 | 1 | 2 | 3>(0);
@@ -102,7 +107,7 @@ export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
     }
   }
 
-  const styles = getStyles({ colors, spacing, radius, layout, opacity });
+  const styles = getStyles({ colors, spacing, radius, layout, opacity, tabBarClearance });
 
   return (
     <Fragment>
@@ -243,7 +248,14 @@ export function CheckInForm({ onLowSoreness }: CheckInFormProps) {
   );
 }
 
-function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout' | 'opacity'>) {
+function getStyles({
+  colors,
+  spacing,
+  radius,
+  layout,
+  opacity,
+  tabBarClearance,
+}: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout' | 'opacity'> & { tabBarClearance: number }) {
   return StyleSheet.create({
     container: {
       width: '100%',
@@ -254,7 +266,7 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
       // Clears the floating tab bar AND the floating submit bar above it —
       // neither reserves its own layout space (NativeTabs, 1.13; submitBar
       // below), so this screen accounts for both itself.
-      paddingBottom: layout.screenBottom + layout.tabBarHeight + layout.minTouchTarget + spacing.lg,
+      paddingBottom: layout.screenBottom + tabBarClearance + layout.minTouchTarget + spacing.lg,
       gap: spacing['2xl'],
     },
     kicker: {
@@ -346,7 +358,7 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
       position: 'absolute',
       left: 0,
       right: 0,
-      bottom: layout.tabBarHeight + spacing.lg,
+      bottom: tabBarClearance + spacing.lg,
       paddingHorizontal: layout.screenHorizontal,
       width: '100%',
       maxWidth: layout.maxContentWidth,

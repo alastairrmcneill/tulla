@@ -1,4 +1,5 @@
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BodyMap } from '@/components/charts/BodyMap';
 import { ThemedText } from '@/components/themed-text';
@@ -15,7 +16,9 @@ import { useTheme } from '@/theme';
  */
 export function BodyMapSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { colors, spacing, radius, layout } = useTheme();
-  const styles = getStyles({ colors, spacing, radius, layout });
+  const insets = useSafeAreaInsets();
+  const tabBarClearance = layout.tabBarHeight + insets.bottom;
+  const styles = getStyles({ colors, spacing, radius, layout, tabBarClearance });
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -40,7 +43,7 @@ export function BodyMapSheet({ visible, onClose }: { visible: boolean; onClose: 
   );
 }
 
-function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout'>) {
+function getStyles({ colors, spacing, radius, layout, tabBarClearance }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout'> & { tabBarClearance: number }) {
   return StyleSheet.create({
     scrim: {
       flex: 1,
@@ -62,7 +65,7 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
     },
     scrollContent: {
       gap: spacing.md,
-      paddingBottom: spacing.xl + layout.tabBarHeight,
+      paddingBottom: spacing.xl + tabBarClearance,
     },
   });
 }

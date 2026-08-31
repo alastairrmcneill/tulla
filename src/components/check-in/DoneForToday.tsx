@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Metric } from '@/components/charts/RadarChart';
 import { RadarChart } from '@/components/charts/RadarChart';
@@ -23,7 +24,11 @@ const METRICS: Metric[] = ['fatigue', 'sleep', 'muscle_soreness', 'stress', 'moo
 export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> }) {
   const { colors, spacing, radius, layout } = useTheme();
   const router = useRouter();
-  const styles = getStyles({ colors, spacing, radius, layout });
+  const insets = useSafeAreaInsets();
+  // layout.tabBarHeight excludes the bottom safe-area inset (its own doc
+  // comment) — NativeTabs floats above that inset, so it's added back here.
+  const tabBarClearance = layout.tabBarHeight + insets.bottom;
+  const styles = getStyles({ colors, spacing, radius, layout, tabBarClearance });
   const { pendingCount } = useSyncStatus();
 
   const baselineQuery = useQuery({
@@ -100,7 +105,7 @@ export function DoneForToday({ checkin }: { checkin: Tables<'daily_checkins'> })
   );
 }
 
-function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout'>) {
+function getStyles({ colors, spacing, radius, layout, tabBarClearance }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout'> & { tabBarClearance: number }) {
   return StyleSheet.create({
     container: {
       width: '100%',
@@ -108,7 +113,7 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       alignSelf: 'center',
       paddingHorizontal: layout.screenHorizontal,
       paddingTop: layout.screenTop,
-      paddingBottom: layout.screenBottom + layout.tabBarHeight,
+      paddingBottom: layout.screenBottom + tabBarClearance,
       gap: spacing.md,
     },
     kicker: {

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { Calendar, type DateData } from 'react-native-calendars';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LogSessionFab } from '@/components/session/LogSessionFab';
 import { RetryBanner } from '@/components/retry-banner';
@@ -102,7 +102,11 @@ export function classifyWellnessScore(score: number | null | undefined): Wellnes
 
 export default function HistoryScreen() {
   const { colors, spacing, radius, layout, typography } = useTheme();
-  const styles = getStyles({ colors, spacing, radius, layout });
+  const insets = useSafeAreaInsets();
+  // layout.tabBarHeight excludes the bottom safe-area inset (its own doc
+  // comment) — NativeTabs floats above that inset, so it's added back here.
+  const tabBarClearance = layout.tabBarHeight + insets.bottom;
+  const styles = getStyles({ colors, spacing, radius, layout, tabBarClearance });
   const { width: windowWidth } = useWindowDimensions();
   const { user } = useAuth();
   const today = localDateString();
@@ -319,7 +323,7 @@ export default function HistoryScreen() {
   );
 }
 
-function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout'>) {
+function getStyles({ colors, spacing, radius, layout, tabBarClearance }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout'> & { tabBarClearance: number }) {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -334,7 +338,7 @@ function getStyles({ colors, spacing, radius, layout }: Pick<ReturnType<typeof u
       alignSelf: 'center',
       paddingHorizontal: layout.screenHorizontal,
       paddingTop: layout.screenTop,
-      paddingBottom: layout.screenBottom + layout.tabBarHeight,
+      paddingBottom: layout.screenBottom + tabBarClearance,
       gap: spacing.lg,
     },
     heading: {

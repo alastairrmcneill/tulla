@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/hooks/use-auth';
@@ -17,7 +18,12 @@ const RPE_VALUES = Array.from({ length: 10 }, (_, i) => i + 1);
 export function LogSessionFab() {
   const { colors, spacing, radius, layout, opacity } = useTheme();
   const { user } = useAuth();
-  const styles = getStyles({ colors, spacing, radius, layout, opacity });
+  const insets = useSafeAreaInsets();
+  // layout.tabBarHeight is explicitly "excluding the bottom safe-area inset"
+  // (its own doc comment) — NativeTabs floats above that inset, so it has to
+  // be added back in here, not baked into the static token.
+  const tabBarClearance = layout.tabBarHeight + insets.bottom;
+  const styles = getStyles({ colors, spacing, radius, layout, opacity, tabBarClearance });
 
   const [open, setOpen] = useState(false);
   const [rpeValue, setRpeValue] = useState(0);
@@ -108,12 +114,19 @@ export function LogSessionFab() {
   );
 }
 
-function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout' | 'opacity'>) {
+function getStyles({
+  colors,
+  spacing,
+  radius,
+  layout,
+  opacity,
+  tabBarClearance,
+}: Pick<ReturnType<typeof useTheme>, 'colors' | 'spacing' | 'radius' | 'layout' | 'opacity'> & { tabBarClearance: number }) {
   return StyleSheet.create({
     fab: {
       position: 'absolute',
       right: spacing.lg,
-      bottom: layout.tabBarHeight + spacing.lg,
+      bottom: tabBarClearance + spacing.lg,
       height: 48,
       paddingHorizontal: spacing.lg,
       borderRadius: radius.extraLarge2,
@@ -137,7 +150,7 @@ function getStyles({ colors, spacing, radius, layout, opacity }: Pick<ReturnType
       borderTopLeftRadius: radius.extraLarge3,
       borderTopRightRadius: radius.extraLarge3,
       padding: spacing.xl,
-      paddingBottom: spacing.xl + layout.tabBarHeight,
+      paddingBottom: spacing.xl + tabBarClearance,
       gap: spacing.md,
     },
     grid: {
