@@ -53,6 +53,8 @@ export const layout = {
   screenBottom: spacing['4xl'],
   /** Max readable measure — used on tablet and web layouts. */
   maxContentWidth: 800,
+  /** Window width at which phone layout switches to tablet (sidebar nav, Team Home split-view) — first needed by 4.5, no prior ticket required a breakpoint. Standard iPad-mini-portrait-and-up threshold. */
+  tabletBreakpoint: 768,
   /** Minimum tappable target (WCAG 2.5.5 / Apple HIG). */
   minTouchTarget: 44,
   /** Height of the tab bar, excluding the bottom safe-area inset. */

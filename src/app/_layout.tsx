@@ -24,7 +24,7 @@ function Navigation() {
         <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="team" options={{ headerShown: false }} />
-        <Stack.Screen name="join/[code]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="join/[code]" options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="notifications" />
         <Stack.Screen name="log-session" options={{ presentation: 'modal' }} />
       </Stack>

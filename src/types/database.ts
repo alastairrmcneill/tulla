@@ -429,6 +429,33 @@ export type Database = {
           sufficient: boolean
         }[]
       }
+      team_flagged_athletes: {
+        Args: { p_team_id: string }
+        Returns: {
+          below_baseline: boolean
+          below_baseline_metric: string
+          below_baseline_z: number
+          load_last_week: number
+          load_this_week: number
+          name: string
+          pain_location: string
+          pain_reported: boolean
+          pain_severity: string
+          priority: number
+          profile_id: string
+          rising_load: boolean
+        }[]
+      }
+      team_has_access: { Args: { p_team_id: string }; Returns: boolean }
+      team_lookup_by_join_code: {
+        Args: { p_join_code: string }
+        Returns: {
+          admin_name: string
+          sport: string
+          team_id: string
+          team_name: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

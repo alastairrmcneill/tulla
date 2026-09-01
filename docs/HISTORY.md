@@ -106,3 +106,51 @@ The free, no-team-required side of the product. Product spec §1: individual tra
 
 ### 3.8 — History screen `[x]`
 Line chart (`react-native-gifted-charts`): trend line is the trailing-14-day average *including* today (3.1's display-smoothing calc, deliberately distinct from `athlete_baseline_14`), 30 daily points. Baseline reference is a single flat dashed line, not a per-day series — reuses one `athlete_baseline_14` call (as-of today) folded into one 0–100 number via the `wellness_score` formula, matching `design-reference`'s own flat-dashed-line baseline treatment; hidden entirely unless every metric's baseline is sufficient. Calendar (`react-native-calendars`): daily `wellness_score` bucketed into the app's 3 existing status roles (danger/warning/success) — no threshold is locked anywhere in the plan, so this avoids inventing a 4th shade — every cell also carries a glyph (▼/–/▲) and a full `accessibilityLabel`, never colour alone. Load-trend: rolling 7-day RPE sums (not calendar weeks, matching 3.1's lagged-window convention), >10% swing for an arrow. Empty state gates on zero `daily_checkins` in the fetch window. Added `expo-linear-gradient`: `react-native-gifted-charts`' `LineChart` imports a gradient package unconditionally at module load regardless of whether gradient props are used — missing it crashed the whole app bundle on launch, not just the chart; caught live on the iOS Simulator. All 4 pure calc functions verified against fixtures.
+
+---
+
+## Epic 4 — Teams & Coaching
+
+The paid product surface. Trial-gating (4.1/4.2) landed before anything that displays gated state, so Team Home never needed a stubbed banner. Built and reviewed as one pass across all 11 tickets rather than ticket-by-ticket, with a device-testing round at the end (per the user's call for this epic specifically) that surfaced several real UI bugs beyond the original spec — those fixes are folded into the relevant ticket below rather than listed separately.
+
+### 4.1 — Trial start trigger `[x]`
+`private.start_trial_for_creator()`, `after insert on teams` — inserts `billing_status` only if the creator has no row yet (second/later team never resets or extends a trial), `trial_length_days` resolved server-side via `hashtext(created_by) % 2` (50/50, never client-supplied). `constants/experiments.ts` mirrors `{control: 7, variant_b: 5}` for display only. Verified live against the real dev project: both variants reachable, second team for the same creator left the existing row untouched.
+
+### 4.2 — `useCoachAccess()` hook + `team_has_access()` `[x]`
+`team_has_access(p_team_id)` — `bool_or` of `has_coach_access()` across a team's admins (handles 4.7's later multi-admin promotion), deliberately `public` (unlike `is_team_member`/`is_team_admin`/`has_coach_access`, which 1.7 moved to `private` specifically to kill their RPC surface) since 4.8/4.10 call it directly from the client; advisor-flagged as callable by `anon` on first deploy, fixed with an explicit `revoke ... from anon`. `hooks/use-coach-access.ts` — `computeCoachAccess()` pure calc factored out, continuous day-math matching `has_coach_access()`'s own comparison exactly rather than a rounded approximation. Verified against fixture rows (mid-trial/expired/subscribed) and against `team_has_access()` for active vs. expired admins.
+
+### 4.3 — Create Team screen `[x]`
+`team/create.tsx`. Caught live: the id can't be read back via `.select().single()` after insert — `teams_select_member` (RLS) only allows a *member* to select a team, and the creator isn't one yet at that instant (the `team_members` insert is the next statement) — fixed by generating the id client-side (`expo-crypto`) instead. Sport chips (Hockey/Football/Rugby/Netball/Running + "Other" free-text) and copy matched to the design-reference screenshots directly, including a "TRIAL ACTIVE · N DAYS" pill shown only when this profile already has a running trial/subscription from another team.
+
+### 4.4 — Flagged-list computation `[x]`
+`team_flagged_athletes(p_team_id)` — independent `pain_reported`/`below_baseline`/`rising_load` per athlete, priority-bucket-then-magnitude sort, `security invoker` so a caller without `has_coach_access()` or without a given athlete's consent simply sees no rows for that athlete from the underlying RLS-protected tables (no auth logic re-derived here). Extended mid-epic with `pain_location` (design fidelity — the flagged-list chip reads "Left leg pain", not the severity word). Verified live with a seeded fixture team: correct reasons/ordering, zero rows for an expired-trial admin and for a non-admin caller.
+
+### 4.5 — Team Home screen (phone + tablet) `[x]`
+`app/team/[id]/index.tsx`. All 5 required sections, plus a "Squad Signals" per-metric panel (sparkline + 14-day delta + today's value, tone-coloured) added after the fact to match design-reference screenshots the user provided — beyond this ticket's literal 5-section scope but requested directly. Custom collapsing header (kicker+title → compact bar on scroll, plain `Animated` API) built in-component rather than via expo-router's native `Stack` header, which pulled in iOS's own translucent/glass material — not this app's chrome. Tablet split-view (flagged list left ~35%, `AthleteDetailView` right ~65%) per product spec §4. Fixed post-build: a `content` container `maxWidth` override was letting the trend chart and squad-signals rows render wider than the phone screen (`LineChart`'s `yAxisLabelWidth` also turned out to render *outside* its `width` prop rather than inside it — fixed by measuring the card via `onLayout` and reserving that space explicitly, plus a `overflow:'hidden'` backstop on the card itself).
+
+### 4.6 — Athlete Detail screen `[x]`
+`components/team/AthleteDetailView.tsx` — one component, used both as `team/[id]/athlete/[athleteId].tsx`'s full-screen phone route and as 4.5's tablet right-pane, per the ticket's own "same component, different container" requirement.
+
+### 4.7 — Roster / Invite screen `[x]`
+`team/[id]/roster.tsx` — join-code display + native `Share.share()`, promote/remove per member. The admin-only `team_members` update/delete RLS this ticket calls for was already added pre-emptively in 1.7 — confirmed by reading the migration, not re-added.
+
+### 4.8 — Custom Questions setup + check-in wiring `[x]`
+`team/[id]/questions.tsx` (up to 2 questions, live preview, trigger's max-2 error surfaced verbatim) and `CheckInForm.tsx` wiring: queries each team-membership's `team_has_access()` and renders that team's questions under their own "Questions from [Team]" divider. Answers are a direct, awaited write (not routed through 2.1's offline queue, which only knows 3 kinds) reusing the queue's own id — best-effort, since a coach's custom question is supplementary, not core wellness data.
+
+### 4.9 — All Responses screen `[x]`
+`team/[id]/responses.tsx` — raw per-athlete table (5 metrics), newest-first, same RLS as every other coach-side read.
+
+### 4.10 — Team Info screen (athlete, read-only) `[x]`
+Athlete branch of `team/[id]/index.tsx` — locked-team notice, exact spec copy, gated on `team_has_access()`.
+
+### 4.11 — Join Team + Consent flow `[x]`
+`team/join.tsx` (6-cell code entry, real OTP-style boxes — not one styled `TextInput` — matching design-reference exactly) and `join/[code].tsx` (consent screen, both the manual-code and `tulla://join/[code]` deep-link paths converge here). New RPC `team_lookup_by_join_code`, not in this ticket's literal text: `teams_select_member` (RLS) blocks a non-member from reading a team's name/coach before joining at all, so a narrow `security definer` lookup (team name/sport/coach name only, never the join code back) was required for the flow to function. The RLS consent-gate this ticket calls for was already added pre-emptively in 1.7 (confirmed by reading the migration) — no new migration needed for that half.
+
+### Untracked but required: Teams tab list screen
+Product spec §4 / screen 7 was never given its own ticket anywhere in the plan, but every other 4.x screen is unreachable without it (it's the only entry point to Create/Join and to any existing team). Built as `app/(tabs)/teams/index.tsx` — flagged to the user as a plan gap rather than silently added.
+
+### Also fixed during this epic
+- **Trial-start paywall** (product spec §3 step 8 / §4): tapping "+ Create a team" with no `billing_status` row yet now goes through `team/paywall.tsx` first (generic copy, no onboarding-quiz context) before `team/create.tsx` — this was missing from the initial pass. Distinct from `(onboarding)/paywall.tsx` (epic 6, personalized headline).
+- **History tab showing stale data after a same-session check-in**: `CheckInForm`'s optimistic cache write only ever touched the Today-tab query key; History reads a different key and tabs stay mounted (no remount to trigger a refetch). Submit now also merges directly into History's cached window (same offline-safe pattern as the Today write) and invalidates the Team Home read keys.
+- **Shared `BackButton`** (`components/back-button.tsx`): every team-flow screen's ad hoc "‹ Label" text link replaced with one component (same tap target, same press-dim feedback) for consistency with Team Home's collapsing-header chevron.
+- Toast feedback on Team Home's "Remind" button (`sendPush()` gave no visible confirmation otherwise) and press feedback on the button itself.

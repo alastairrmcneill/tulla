@@ -22,14 +22,14 @@
 | 1 | Foundation | done — [`HISTORY.md`](HISTORY.md) |
 | 2 | Shared Data & Notification Infrastructure | done — [`HISTORY.md`](HISTORY.md) |
 | 3 | Athlete Core | done — [`HISTORY.md`](HISTORY.md) |
-| 4 | [Teams & Coaching](plan/epic-4.md) | not started |
+| 4 | Teams & Coaching | done — [`HISTORY.md`](HISTORY.md) |
 | 5 | [Billing & Subscriptions](plan/epic-5.md) | not started |
 | 6 | [Onboarding & Account](plan/epic-6.md) | not started |
 | 7 | [Native Polish](plan/epic-7.md) | not started |
 | 8 | [Pilot Distribution](plan/epic-8.md) | not started |
 | 9 | [Public Release](plan/epic-9.md) | not started |
 
-**Next up:** Epic 4, ticket 4.1.
+**Next up:** Epic 5, ticket 5.1.
 
 ## Locked technical decisions (quick reference — full detail lives in the owning ticket)
 
